@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Planificación Pool Concept</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#555962;text-align:center;padding:24px}
+  .icono{width:120px;height:120px;border-radius:26px;box-shadow:0 2px 10px rgba(85,89,98,.18)}
+  .logo{height:40px;width:auto}
+  p{margin:0;max-width:320px;line-height:1.5;color:#6A6F78}
+  .btn{background:#03A1BE;color:#fff;text-decoration:none;font-weight:600;padding:14px 26px;border-radius:12px;border:0;font-size:16px;cursor:pointer}
+  .sec{color:#03A1BE;font-weight:600;text-decoration:none}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+  <img class="icono" src="icon-512.png" alt="">
+  <img class="logo" src="logo.png" alt="Pool Concept">
+  <p id="msg">Para instalarla, abre el menú ⋮ de Chrome y pulsa «Instalar aplicación».</p>
+  <button class="btn" id="instalar" hidden>Instalar Planificación</button>
+  <a class="sec" id="go" href="#">Abrir sin instalar</a>
+<script>
+  // ⬇️ URL de la aplicación web de Apps Script (la que termina en /exec)
+  var URL_APP = 'https://script.google.com/a/macros/poolconcept.es/s/AKfycbz0FwZbXF0EsmNJBUGYhMCPEoIkNvOp19Agz1L7yGu2S2FqsgLnvwuxYBRJCIIiQ88n/exec';
+
+  document.getElementById('go').href = URL_APP;
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+  // Solo salta a la app cuando se abre desde el icono instalado.
+  // En el navegador se queda aquí para que Chrome pueda instalarla con su logo.
+  var instalada = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (instalada) {
+    document.getElementById('msg').textContent = 'Abriendo…';
+    document.getElementById('go').hidden = true;
+    location.replace(URL_APP);
+  }
+
+  // Botón «Instalar» cuando Chrome lo permite
+  var aviso;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); aviso = e;
+    document.getElementById('instalar').hidden = false;
+    document.getElementById('msg').textContent = 'Instálala para tenerla en la pantalla de inicio con su icono.';
+  });
+  document.getElementById('instalar').onclick = function () {
+    if (!aviso) return;
+    aviso.prompt();
+    aviso.userChoice.then(function () { aviso = null; document.getElementById('instalar').hidden = true; });
+  };
+  window.addEventListener('appinstalled', function () {
+    document.getElementById('msg').textContent = 'Instalada. Ábrela desde el icono de Planificación.';
+  });
+</script>
+</body>
+</html>
