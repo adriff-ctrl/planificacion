@@ -211,6 +211,31 @@ textarea{min-height:84px;resize:vertical}
 .toast.ver{opacity:1;transform:translate(-50%,0)}
 .cargando{padding:40px 16px;text-align:center;color:var(--suave);font-weight:600}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
+.toast.accion{pointer-events:auto;display:flex;align-items:center;gap:14px}
+.toast button{border:0;background:none;color:var(--cian-texto);font-weight:800;padding:2px 0;text-decoration:underline}
+@media (prefers-color-scheme: dark){.toast button{color:#0B5F70}}
+
+/* Ordenador: pantalla completa, panel lateral y tareas arrastrables */
+@media (min-width:1024px){
+  main{max-width:none;padding:14px 20px}
+  .cab-fila,.regleta{max-width:none}
+  .cab{padding-left:20px;padding-right:20px}
+  .tl{--izq:170px}
+}
+.ayuda-raton{display:none}
+@media (pointer:fine){ .ayuda-raton{display:inline} .ayuda-tactil{display:none} .tl-tarea{cursor:grab} }
+.tl-tarea .tirador{position:absolute;top:0;bottom:0;width:10px;margin-left:-6px;cursor:ew-resize;border-radius:0 6px 6px 0;z-index:1}
+.tl-tarea.sel .fondo{box-shadow:0 0 0 2px var(--c),0 4px 12px rgba(30,35,45,.18)}
+.tl-tarea:hover .tirador{background:var(--c);opacity:.55}
+@media (pointer:coarse){.tl-tarea .tirador{display:none}}
+.tl-tarea.moviendo{z-index:6;cursor:grabbing}
+.tl-tarea.moviendo .fondo{box-shadow:0 6px 16px rgba(30,35,45,.25),0 0 0 2px var(--c)}
+.tl-tarea.moviendo .s{color:var(--fuerte);font-weight:700}
+.tl.arrastrando-tarea{cursor:grabbing;user-select:none}
+body.panel{padding-right:440px}
+body.panel .nueva{display:none}
+dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:440px;height:100%;max-height:100%;
+  border-radius:0;border-left:1px solid var(--linea);box-shadow:-10px 0 28px rgba(30,35,45,.14);z-index:30;overflow:auto}
 </style>
 </head>
 <body>
@@ -373,7 +398,7 @@ function render() {
   $('#regleta').innerHTML = regletaHTML();
   if (!E.cargado) return;
   $('#main').innerHTML = E.vista === 'mes' ? htmlGantt() : htmlLista();
-  if (E.vista === 'mes') initTL();
+  if (E.vista === 'mes') { initTL(); if (dlg.open) marcarSel(E.editId); }
 }
 
 /* ---------- Cronología (Gantt) ---------- */
@@ -421,7 +446,7 @@ function htmlGantt() {
 
   let h = `<div class="tl-barra"><div class="escala" role="group" aria-label="Escala">${
     Object.keys(ESCALAS).map(k => `<button type="button" data-escala="${k}" aria-pressed="${k === ESC}">${NOM_ESC[k]}</button>`).join('')
-  }</div><span class="tl-ayuda">Usa la barra de abajo o arrastra el diagrama para moverte entre meses.</span></div>`;
+  }</div><span class="tl-ayuda"><span class="ayuda-raton">Arrastra una tarea para moverla o su borde derecho para alargarla. Arrastra el fondo o usa la barra de abajo para cambiar de mes.</span><span class="ayuda-tactil">Usa la barra de abajo o desliza el diagrama para moverte entre meses.</span></span></div>`;
   h += `<div class="tl esc-${ESC}" id="tl" style="--dpx:${dpx}px"><div class="tl-lienzo" style="width:calc(var(--izq) + ${W}px)">`;
 
   // Cabecera: meses y días
@@ -472,7 +497,7 @@ function htmlGantt() {
       const tip = o.p + '\n' + o.s + (o.t.ubicacion ? '\n' + o.t.ubicacion : '');
       h += `<div class="tl-tarea" data-id="${esc(o.t.id)}" tabindex="0" role="button" title="${esc(tip)}"
         aria-label="Editar ${esc(tp)}: ${esc(o.p)}, ${esc(o.s)}" style="left:${o.x}px;top:${8 + o.f * 48}px">
-        <span class="fondo" style="width:${o.w}px"></span>
+        <span class="fondo" style="width:${o.w}px"></span><span class="tirador" style="left:${o.w}px" title="Arrastra para cambiar la duración"></span>
         <span class="txt"><span class="p">${esc(o.p)}</span><span class="s">${esc(o.s)}</span></span></div>`;
     });
     h += '</div></div>';
@@ -515,6 +540,20 @@ function initTL() {
   // Arrastrar con el ratón
   el.addEventListener('pointerdown', e => {
     if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    const nodo = e.target.closest('.tl-tarea');
+    if (nodo) { // mover o alargar una tarea
+      const t = E.tareas.find(x => x.id === nodo.dataset.id); if (!t) return;
+      e.preventDefault();
+      Object.assign(BAR, {
+        nodo, t, el, dpx, x: e.clientX, n: 0, movido: false,
+        modo: e.target.closest('.tirador') ? 'alargar' : 'mover',
+        left: parseFloat(nodo.style.left), fondo: nodo.querySelector('.fondo'),
+        tirador: nodo.querySelector('.tirador'), w: parseFloat(nodo.querySelector('.fondo').style.width),
+        texto: nodo.querySelector('.s').textContent
+      });
+      ARR.movido = false;
+      return;
+    }
     ARR.el = el; ARR.x = e.clientX; ARR.s = el.scrollLeft; ARR.movido = false;
   });
   el.addEventListener('click', e => { if (ARR.movido) { e.stopPropagation(); e.preventDefault(); ARR.movido = false; } }, true);
@@ -533,6 +572,77 @@ window.addEventListener('pointermove', e => {
   if (ARR.movido) ARR.el.scrollLeft = ARR.s - dx;
 });
 window.addEventListener('pointerup', () => { if (ARR.el) ARR.el.classList.remove('arrastrando'); ARR.el = null; });
+
+/* ---------- Mover y alargar tareas con el ratón ---------- */
+const BAR = { nodo: null };
+
+// Días laborables entre dos fechas (ambas incluidas)
+function contarLab(a, b) { let n = 0; for (let d = a; d <= b; d = sumar(d, 1)) if (laborable(d)) n++; return n; }
+
+// Cómo quedaría la tarea al desplazarla n días
+function previa(t, modo, n) {
+  if (modo === 'mover') {
+    // Si cae en fin de semana o festivo, salta al laborable más cercano en el sentido del arrastre
+    let inicio = sumar(t.inicio, n);
+    for (let i = 0; i < 30 && !laborable(inicio); i++) inicio = sumar(inicio, n < 0 ? -1 : 1);
+    const r = calcularFin(inicio, t.duracion);
+    return { inicio, duracion: t.duracion, fin: r ? r.fin : t.fin };
+  }
+  let finNuevo = sumar(t.fin, n);
+  if (finNuevo < t.inicio) finNuevo = t.inicio;
+  const duracion = Math.max(1, contarLab(t.inicio, finNuevo));
+  const r = calcularFin(t.inicio, duracion);
+  return { inicio: t.inicio, duracion, fin: r ? r.fin : t.fin };
+}
+
+window.addEventListener('pointermove', e => {
+  if (!BAR.nodo) return;
+  const dx = e.clientX - BAR.x;
+  if (!BAR.movido && Math.abs(dx) > 4) {
+    BAR.movido = true; BAR.nodo.classList.add('moviendo'); BAR.el.classList.add('arrastrando-tarea');
+  }
+  if (!BAR.movido) return;
+  let n = Math.round(dx / BAR.dpx);
+  if (BAR.modo === 'alargar') n = Math.max(n, -(entre(BAR.t.inicio, BAR.t.fin)));
+  if (n === BAR.n) return;
+  BAR.n = n;
+  if (BAR.modo === 'mover') BAR.nodo.style.left = (BAR.left + n * BAR.dpx) + 'px';
+  else {
+    const w = Math.max(BAR.dpx, BAR.w + n * BAR.dpx);
+    BAR.fondo.style.width = w + 'px'; BAR.tirador.style.left = w + 'px';
+  }
+  const p = previa(BAR.t, BAR.modo, n);
+  BAR.nodo.querySelector('.s').textContent = `${dm(p.inicio)} – ${dm(p.fin)}, ${plural(p.duracion, 'día', 'días')}`;
+});
+
+window.addEventListener('pointerup', () => {
+  if (!BAR.nodo) return;
+  const { t, modo, n, movido, el } = BAR;
+  el.classList.remove('arrastrando-tarea');
+  BAR.nodo = null;
+  if (!movido) return;           // ha sido un clic: se abre la tarea
+  ARR.movido = true;             // evita que el clic abra el formulario
+  const p = previa(t, modo, n);
+  if (p.inicio === t.inicio && p.duracion === t.duracion) { render(); return; }
+  cambiarFechas(t.id, p, true);
+});
+
+async function cambiarFechas(id, p, conDeshacer) {
+  const t = E.tareas.find(x => x.id === id); if (!t) return;
+  const antes = { inicio: t.inicio, duracion: t.duracion, fin: t.fin };
+  Object.assign(t, p);
+  render();
+  try {
+    const d = await llamar('guardarTarea', Object.assign({}, t));
+    aplicar(d);
+    if (dlg.open && E.editId === id) abrirForm(E.tareas.find(x => x.id === id));
+    const msg = `${t.proyecto}: ${corto(p.inicio)} a ${corto(p.fin)}`;
+    toast(msg, conDeshacer ? { texto: 'Deshacer', fn: () => cambiarFechas(id, antes, false) } : null);
+  } catch (ex) {
+    Object.assign(t, antes); render();
+    toast('No se pudo guardar el cambio: ' + ((ex && ex.message) || ex));
+  }
+}
 
 function irA(fecha, alinear) {
   const el = $('#tl'); if (!el) return;
@@ -599,7 +709,15 @@ function abrirForm(t, inicio) {
   $('#btnEliminar').textContent = 'Eliminar tarea';
   $('#formError').hidden = true;
   actualizarFin();
-  dlg.showModal();
+  if (escritorio()) {
+    dlg.classList.add('lateral');
+    marcarSel(t ? t.id : null);
+    document.body.classList.add('panel');
+    if (!dlg.open) dlg.show();
+  } else {
+    dlg.classList.remove('lateral');
+    if (!dlg.open) dlg.showModal();
+  }
   if (!t) setTimeout(() => $('#fProyecto').focus(), 50);
 }
 
@@ -687,6 +805,13 @@ $('#btnEliminar').addEventListener('click', async () => {
 
 $('#btnCancelar').addEventListener('click', () => dlg.close());
 $('#btnCerrar').addEventListener('click', () => dlg.close());
+const escritorio = () => matchMedia('(min-width: 1024px) and (pointer: fine)').matches;
+function marcarSel(id) {
+  document.querySelectorAll('.tl-tarea.sel').forEach(n => n.classList.remove('sel'));
+  if (id) document.querySelectorAll('.tl-tarea').forEach(n => { if (n.dataset.id === id) n.classList.add('sel'); });
+}
+dlg.addEventListener('close', () => { document.body.classList.remove('panel'); E.editId = null; marcarSel(null); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && dlg.open && dlg.classList.contains('lateral')) dlg.close(); });
 
 /* ---------- Navegación y eventos ---------- */
 function moverMes(n) {
@@ -725,9 +850,18 @@ document.addEventListener('keydown', e => {
 });
 
 let toastT;
-function toast(txt) {
-  const t = $('#toast'); t.textContent = txt; t.classList.add('ver');
-  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('ver'), 2200);
+function toast(txt, accion) {
+  const t = $('#toast');
+  t.textContent = txt;
+  t.classList.toggle('accion', !!accion);
+  if (accion) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = accion.texto;
+    b.onclick = () => { t.classList.remove('ver'); accion.fn(); };
+    t.appendChild(b);
+  }
+  t.classList.add('ver');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('ver'), accion ? 6000 : 2200);
 }
 
 /* ---------- Arranque ---------- */
