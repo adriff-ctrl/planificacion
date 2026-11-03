@@ -87,6 +87,11 @@ button{cursor:pointer}
   .mes-titulo{min-width:8.6em;font-size:30px}
 }
 @media (max-width:760px){.mes-titulo{font-size:26px}}
+/* Con el panel lateral abierto queda menos ancho: mes en segunda fila */
+body.panel .cab-top{grid-template-columns:1fr auto;row-gap:10px}
+body.panel .centro{grid-column:1 / -1;grid-row:2;justify-self:center}
+body.panel .der{grid-column:2}
+body.panel .mes-titulo{min-width:8.6em;font-size:30px}
 .mes-titulo span{color:var(--cian-texto);font-weight:500}
 .flechas{margin-left:auto;display:flex;gap:6px}
 .flechas button{border:1px solid var(--cab-linea);background:none;color:var(--cab-texto);
@@ -177,6 +182,42 @@ main{max-width:1100px;margin:0 auto;padding:14px 12px}
   .tl-ayuda{display:none}
 }
 
+/* Estado, avisos y dependencias */
+.e-pen{--c:var(--suave);--cf:#6B7079}
+.e-cur{--c:var(--pc-cian);--cf:#02829A}
+.e-ter{--c:#2F8A3A;--cf:#2A7A33}
+.ico{width:13px;height:13px;vertical-align:-2px;margin-right:4px;flex:none}
+.ico-aviso{color:#D0353F}
+.ico-enlace{color:var(--suave)}
+.tl-tarea.choque .fondo{outline:2px dashed #D0353F;outline-offset:1px}
+.tl-tarea.terminada .fondo{opacity:.4}
+.tl-tarea.terminada .p{color:var(--suave);text-decoration:line-through}
+.tl-tarea.encurso .fondo{background-image:repeating-linear-gradient(135deg,transparent 0 7px,rgba(255,255,255,.45) 7px 11px)}
+.tl-tarea.resaltar .fondo{animation:latido 1s ease 2}
+@keyframes latido{50%{box-shadow:0 0 0 6px rgba(208,53,63,.35)}}
+.chip-aviso{display:inline-flex;align-items:center;gap:6px;border:1px solid #D0353F;color:#B82D37;background:rgba(208,53,63,.08);
+  border-radius:999px;padding:5px 12px;font-weight:700;font-size:13px}
+.chip-aviso .ico{color:#D0353F;width:15px;height:15px;margin:0}
+@media (prefers-color-scheme: dark){.chip-aviso{color:#F07A82}}
+.tl-barra-izq{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.aviso-rojo{background:rgba(208,53,63,.1);color:var(--error)}
+.aviso-rojo ul{margin:4px 0 0;padding-left:18px}
+.nota-campo{margin-top:-6px;font-size:14px;color:var(--suave)}
+.nota-campo.mal{background:rgba(208,53,63,.1);color:var(--error);border-radius:8px;padding:10px 12px;margin-top:0;font-weight:500}
+.nota-campo button{margin-top:6px;border:1px solid currentColor;background:none;color:inherit;border-radius:6px;padding:4px 10px;font-weight:700}
+.hist{border-top:1px solid var(--linea);padding-top:12px}
+.hist h3{font-size:15px;margin:0 0 8px;color:var(--fuerte)}
+.hist ol{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:13px;color:var(--suave)}
+.hist li b{color:var(--tinta)}
+.hist li span{display:block}
+.estado-t{font-style:normal;font-weight:700;font-size:12px;border-radius:999px;padding:1px 8px;margin-left:6px;color:#fff;background:var(--cf)}
+.tarea.terminada{opacity:.6}
+.tarea .aviso-t{color:var(--error);font-size:14px;font-weight:600}
+dialog.conf{width:calc(100% - 32px);max-width:480px;margin:auto;border-radius:14px;max-height:90vh;z-index:50}
+.conf-in{padding:20px;display:grid;gap:12px}
+.conf-in h2{margin:0}
+.conf-in p{margin:0;line-height:1.5}
+
 /* Detalle del día y lista */
 .detalle{margin-top:18px}
 h2{font-family:var(--cond);font-weight:800;font-size:22px;color:var(--fuerte);margin:0 0 6px;line-height:1.1}
@@ -221,7 +262,7 @@ legend,label>span{display:block;font-weight:600;font-size:15px;margin-bottom:5px
   padding:9px 4px;font-weight:700;margin:0}
 .seg input:checked+span{background:var(--cf);border-color:var(--cf);color:#fff}
 .seg input:focus-visible+span{outline:3px solid var(--tinta);outline-offset:2px}
-input[type=text],input[type=date],input[type=number],textarea{width:100%;border:1px solid var(--linea);
+input[type=text],input[type=date],input[type=number],textarea,select{width:100%;border:1px solid var(--linea);
   background:var(--fondo);border-radius:8px;padding:10px 12px}
 textarea{min-height:84px;resize:vertical}
 .dos{display:grid;grid-template-columns:1fr 120px;gap:10px}
@@ -334,9 +375,24 @@ dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:44
 
     <div class="fin" id="finBox"><small>Fecha de fin</small><strong>Indica el inicio y la duración</strong></div>
 
+    <fieldset>
+      <legend>Estado</legend>
+      <div class="seg">
+        <label class="e-pen"><input type="radio" name="estado" value="Pendiente"><span>Pendiente</span></label>
+        <label class="e-cur"><input type="radio" name="estado" value="En curso"><span>En curso</span></label>
+        <label class="e-ter"><input type="radio" name="estado" value="Terminada"><span>Terminada</span></label>
+      </div>
+    </fieldset>
+
+    <label id="campoDep" hidden><span>Va después de la fabricación</span>
+      <select id="fDepende"><option value="">Ninguna</option></select>
+    </label>
+    <div id="ayudaDep" class="nota-campo" hidden></div>
+
     <label><span>Ubicación</span><input type="text" id="fUbicacion" autocomplete="off" placeholder="Dirección o municipio"></label>
 
     <label><span>Equipo asignado</span><input type="text" id="fEquipo" list="dlEquipos" autocomplete="off"></label>
+    <div id="avisoEquipo" class="aviso aviso-rojo" hidden></div>
 
     <label><span>Observaciones</span><textarea id="fObs"></textarea></label>
 
@@ -347,12 +403,28 @@ dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:44
       <button type="button" class="secundario" id="btnCancelar">Cancelar</button>
       <button type="button" class="peligro" id="btnEliminar" hidden>Eliminar tarea</button>
     </div>
+
+    <section class="hist" id="histTarea" hidden>
+      <h3>Últimos cambios</h3>
+      <ol id="histLista"></ol>
+    </section>
   </form>
 </dialog>
 
 <datalist id="dlProyectos"></datalist>
 <datalist id="dlEquipos"></datalist>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="dlgConf" class="conf" aria-labelledby="confTit">
+  <div class="conf-in">
+    <h2 id="confTit"></h2>
+    <p id="confTxt"></p>
+    <div class="acciones">
+      <button type="button" class="primario" id="confSi"></button>
+      <button type="button" class="secundario" id="confNo"></button>
+    </div>
+  </div>
+</dialog>
 
 <script>
 const TIPOS = ['Fabricación', 'Instalación', 'Reparación'];
@@ -404,6 +476,8 @@ function aplicar(d) {
   E.tareas = d.tareas || [];
   E.festivos = new Map((d.festivos || []).map(f => [f.fecha, f]));
   E.equipos = d.equipos || [];
+  E.historial = d.historial || [];
+  E.usuario = d.usuario || '';
   E.cargado = true;
   $('#dlEquipos').innerHTML = E.equipos.map(x => `<option value="${esc(x)}">`).join('');
   const proys = [...new Set(E.tareas.map(t => t.proyecto))].sort((a, b) => a.localeCompare(b, 'es'));
@@ -413,6 +487,42 @@ function aplicar(d) {
 
 /* ---------- Pintado ---------- */
 const visibles = () => E.tareas.filter(t => E.filtro.has(t.tipo));
+
+/* ---------- Avisos: equipos ocupados e instalaciones antes de su fabricación ---------- */
+const ICO = {
+  aviso: '<svg class="ico ico-aviso" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 1.5 21h21L12 2.5z" fill="currentColor"/><path d="M12 9.5v5.5M12 18v.01" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  enlace: '<svg class="ico ico-enlace" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>'
+};
+const normEq = s => String(s || '').trim().toLowerCase();
+function seSolapan(a, b) {
+  const ini = a.inicio > b.inicio ? a.inicio : b.inicio;
+  const fin = a.fin < b.fin ? a.fin : b.fin;
+  for (let d = ini; d <= fin; d = sumar(d, 1)) if (laborable(d)) return true;
+  return false;
+}
+function choquesDe(t) {
+  if (!normEq(t.equipo) || t.estado === 'Terminada') return [];
+  return E.tareas.filter(o => o.id !== t.id && o.estado !== 'Terminada' && normEq(o.equipo) === normEq(t.equipo) && seSolapan(t, o));
+}
+function fabDe(t) {
+  return t.tipo === 'Instalación' && t.dependeDe ? (E.tareas.find(x => x.id === t.dependeDe && x.tipo === 'Fabricación') || null) : null;
+}
+function antesDeFab(t) { const f = fabDe(t); return f && t.estado !== 'Terminada' && t.inicio <= f.fin ? f : null; }
+function instalacionesDe(fabId) { return E.tareas.filter(t => t.tipo === 'Instalación' && t.dependeDe === fabId); }
+function calcularAvisos() {
+  E.avisos = new Map();
+  E.tareas.forEach(t => {
+    const c = choquesDe(t), f = antesDeFab(t);
+    if (c.length || f) E.avisos.set(t.id, { choques: c, fab: f });
+  });
+}
+function lineasAviso(a) {
+  const l = a.choques.map(o => `${o.equipo} también está en ${o.proyecto} (${dm(o.inicio)} – ${dm(o.fin)})`);
+  if (a.fab) l.push(`Empieza antes de que termine su fabricación (${a.fab.proyecto}, acaba el ${dm(a.fab.fin)})`);
+  return l;
+}
+const nombreUsuario = u => String(u || '').split('@')[0] || 'alguien';
+function fechaHora(s) { const d = new Date(s); return isNaN(d) ? s : d.getDate() + ' ' + MESES[d.getMonth()].slice(0, 3).toLowerCase() + ', ' + fHora.format(d); }
 
 function regletaHTML() {
   const inicioMes = `${E.anio}-${pad(E.mes + 1)}-01`;
@@ -427,6 +537,7 @@ function regletaHTML() {
 }
 
 function render() {
+  calcularAvisos();
   $('#mesTitulo').innerHTML = `${MESES[E.mes]} <span>${E.anio}</span>`;
   $('#navMes').hidden = E.vista !== 'mes';
   $('#mesHoy').hidden = E.vista !== 'mes';
@@ -466,8 +577,8 @@ function repartir(ts, a, dpx) {
     const x = entre(a, t.inicio) * dpx;
     const w = (entre(t.inicio, t.fin) + 1) * dpx;
     const p = t.proyecto;
-    const s = `${dm(t.inicio)} – ${dm(t.fin)}, ${plural(t.duracion, 'día', 'días')}${t.equipo ? ', ' + t.equipo : ''}`;
-    const tw = Math.min(340, Math.max(p.length * 7.8, s.length * 6.4) + 24);
+    const s = `${t.estado !== 'Pendiente' ? t.estado + ', ' : ''}${dm(t.inicio)} – ${dm(t.fin)}, ${plural(t.duracion, 'día', 'días')}${t.equipo ? ', ' + t.equipo : ''}`;
+    const tw = Math.min(360, Math.max(p.length * 7.8 + 36, s.length * 6.4) + 24);
     let f = filas.findIndex(fin => fin + 8 <= x);
     if (f < 0) { f = filas.length; filas.push(0); }
     filas[f] = x + Math.max(w, tw);
@@ -483,9 +594,11 @@ function htmlGantt() {
   E.tl = { a, dpx };
   const LET = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
 
-  let h = `<div class="tl-barra"><div class="escala" role="group" aria-label="Escala">${
+  const pendientes = avisosPendientes();
+  let h = `<div class="tl-barra"><div class="tl-barra-izq"><div class="escala" role="group" aria-label="Escala">${
     Object.keys(ESCALAS).map(k => `<button type="button" data-escala="${k}" aria-pressed="${k === ESC}">${NOM_ESC[k]}</button>`).join('')
-  }</div><span class="tl-ayuda"><span class="ayuda-raton">Arrastra una tarea para moverla o su borde derecho para alargarla. Arrastra el fondo o usa la barra de abajo para cambiar de mes.</span><span class="ayuda-tactil">Usa la barra de abajo o desliza el diagrama para moverte entre meses.</span></span></div>`;
+  }</div>${pendientes.length ? `<button type="button" class="chip-aviso" id="btnAvisos"
+    title="Equipos con dos tareas a la vez o instalaciones que empiezan antes de su fabricación. Pulsa para ir a cada una.">${ICO.aviso}${plural(pendientes.length, 'aviso', 'avisos')}</button>` : ''}</div><span class="tl-ayuda"><span class="ayuda-raton">Arrastra una tarea para moverla o su borde derecho para alargarla. Arrastra el fondo o usa la barra de abajo para cambiar de mes.</span><span class="ayuda-tactil">Usa la barra de abajo o desliza el diagrama para moverte entre meses.</span></span></div>`;
   h += `<div class="tl esc-${ESC}" id="tl" style="--dpx:${dpx}px"><div class="tl-lienzo" style="width:calc(var(--izq) + ${W}px)">`;
 
   // Cabecera: meses y días
@@ -533,11 +646,13 @@ function htmlGantt() {
     h += `<div class="tl-carril t-${CLASE[tp]}"><div class="tl-nom"><div class="tl-nom-in"><b>${tp}</b><small>${plural(ts.length, 'tarea', 'tareas')}</small></div></div>
       <div class="tl-zona" style="width:${W}px;height:${n * 48 + 8}px">`;
     out.forEach(o => {
-      const tip = o.p + '\n' + o.s + (o.t.ubicacion ? '\n' + o.t.ubicacion : '');
-      h += `<div class="tl-tarea" data-id="${esc(o.t.id)}" tabindex="0" role="button" title="${esc(tip)}"
+      const av = E.avisos.get(o.t.id), fab = fabDe(o.t);
+      const tip = [o.p, o.s, o.t.ubicacion, fab ? 'Va después de: ' + fab.proyecto : '', ...(av ? lineasAviso(av).map(x => '⚠ ' + x) : [])].filter(Boolean).join('\n');
+      const cls = 'tl-tarea' + (av ? ' choque' : '') + (o.t.estado === 'Terminada' ? ' terminada' : '') + (o.t.estado === 'En curso' ? ' encurso' : '');
+      h += `<div class="${cls}" data-id="${esc(o.t.id)}" tabindex="0" role="button" title="${esc(tip)}"
         aria-label="Editar ${esc(tp)}: ${esc(o.p)}, ${esc(o.s)}" style="left:${o.x}px;top:${8 + o.f * 48}px">
         <span class="fondo" style="width:${o.w}px"></span><span class="tirador" style="left:${o.w}px" title="Arrastra para cambiar la duración"></span>
-        <span class="txt"><span class="p">${esc(o.p)}</span><span class="s">${esc(o.s)}</span></span></div>`;
+        <span class="txt"><span class="p">${av ? ICO.aviso : ''}${fab ? ICO.enlace : ''}${esc(o.p)}</span><span class="s">${esc(o.s)}</span></span></div>`;
     });
     h += '</div></div>';
   });
@@ -607,6 +722,22 @@ function initTL() {
 }
 const ARR = { el: null, x: 0, s: 0, movido: false };
 
+// Tareas con aviso que aún no han terminado, por orden de fecha
+function avisosPendientes() {
+  return E.tareas.filter(t => E.avisos.has(t.id) && t.fin >= HOY).sort((a, b) => a.inicio.localeCompare(b.inicio));
+}
+let avisoIdx = -1;
+function siguienteAviso() {
+  const l = avisosPendientes(); if (!l.length) return;
+  avisoIdx = (avisoIdx + 1) % l.length;
+  const t = l[avisoIdx];
+  const nodo = [...document.querySelectorAll('.tl-tarea')].find(n => n.dataset.id === t.id);
+  if (!nodo) return;
+  nodo.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+  nodo.classList.remove('resaltar'); void nodo.offsetWidth; nodo.classList.add('resaltar');
+  toast(`${t.proyecto}: ${lineasAviso(E.avisos.get(t.id))[0]}`);
+}
+
 // El diagrama ocupa el alto disponible de la pantalla y se desplaza por dentro,
 // así la fila de meses y días queda siempre fija arriba.
 function ajustarAlto(el) {
@@ -674,24 +805,68 @@ window.addEventListener('pointerup', () => {
   ARR.movido = true;             // evita que el clic abra el formulario
   const p = previa(t, modo, n);
   if (p.inicio === t.inicio && p.duracion === t.duracion) { render(); return; }
-  cambiarFechas(t.id, p, true);
+  cambiarFechas(t.id, p, true, modo === 'mover' ? 'Movida en el Gantt' : 'Duración cambiada en el Gantt');
 });
 
-async function cambiarFechas(id, p, conDeshacer) {
-  const t = E.tareas.find(x => x.id === id); if (!t) return;
+async function cambiarFechas(id, p, conDeshacer, accion, silencioso) {
+  const t = E.tareas.find(x => x.id === id); if (!t) return false;
   const antes = { inicio: t.inicio, duracion: t.duracion, fin: t.fin };
   Object.assign(t, p);
   render();
   try {
-    const d = await llamar('guardarTarea', Object.assign({}, t));
+    const d = await llamar('guardarTarea', Object.assign({}, t, { accion: accion || 'Modificada' }));
     aplicar(d);
-    if (dlg.open && E.editId === id) abrirForm(E.tareas.find(x => x.id === id));
-    const msg = `${t.proyecto}: ${corto(p.inicio)} a ${corto(p.fin)}`;
-    toast(msg, conDeshacer ? { texto: 'Deshacer', fn: () => cambiarFechas(id, antes, false) } : null);
+    const nueva = E.tareas.find(x => x.id === id);
+    if (dlg.open && E.editId === id) abrirForm(nueva);
+    if (!silencioso) {
+      const av = E.avisos.get(id);
+      const msg = `${t.proyecto}: ${corto(p.inicio)} a ${corto(p.fin)}` + (av ? `. Aviso: ${lineasAviso(av)[0]}` : '');
+      toast(msg, conDeshacer ? { texto: 'Deshacer', fn: () => cambiarFechas(id, antes, false, 'Cambio deshecho') } : null);
+      if (nueva && nueva.tipo === 'Fabricación') revisarInstalaciones(id);
+    }
+    return true;
   } catch (ex) {
     Object.assign(t, antes); render();
     toast('No se pudo guardar el cambio: ' + ((ex && ex.message) || ex));
+    return false;
   }
+}
+
+// Si una fabricación acaba después de que empiece su instalación, propone moverla
+async function revisarInstalaciones(fabId) {
+  const fab = E.tareas.find(x => x.id === fabId); if (!fab) return;
+  const malas = instalacionesDe(fabId).filter(t => t.estado !== 'Terminada' && t.inicio <= fab.fin);
+  if (!malas.length) return;
+  const nuevo = siguienteLab(sumar(fab.fin, 1));
+  const varias = malas.length > 1;
+  const ok = await confirmar(
+    varias ? '¿Mover también las instalaciones?' : '¿Mover también la instalación?',
+    `La fabricación de ${fab.proyecto} acaba ahora el ${largo(fab.fin).toLowerCase()}, pero ${
+      varias ? 'estas instalaciones empiezan' : 'su instalación empieza'} antes: ${
+      malas.map(t => `${t.proyecto} (${dm(t.inicio)})`).join(', ')}. ¿${varias ? 'Las muevo' : 'La muevo'} al ${largo(nuevo).toLowerCase()}, manteniendo sus días de trabajo?`,
+    varias ? 'Mover instalaciones' : 'Mover instalación', 'Dejar como está');
+  if (!ok) return;
+  let movidas = 0;
+  for (const t of malas) {
+    const r = calcularFin(nuevo, t.duracion);
+    if (await cambiarFechas(t.id, { inicio: nuevo, duracion: t.duracion, fin: r ? r.fin : nuevo }, false, 'Movida tras su fabricación', true)) movidas++;
+  }
+  if (movidas) toast(`${plural(movidas, 'instalación movida', 'instalaciones movidas')} al ${corto(nuevo)}`);
+}
+
+// Ventana de confirmación con dos botones
+function confirmar(titulo, texto, si, no) {
+  const d = $('#dlgConf');
+  $('#confTit').textContent = titulo; $('#confTxt').textContent = texto;
+  $('#confSi').textContent = si; $('#confNo').textContent = no;
+  return new Promise(res => {
+    const fin = v => { d.close(); $('#confSi').onclick = $('#confNo').onclick = null; res(v); };
+    $('#confSi').onclick = () => fin(true);
+    $('#confNo').onclick = () => fin(false);
+    d.oncancel = e => { e.preventDefault(); fin(false); };
+    d.showModal();
+    $('#confSi').focus();
+  });
 }
 
 function irA(fecha, alinear) {
@@ -704,7 +879,7 @@ function irA(fecha, alinear) {
 function htmlLista() {
   const q = E.busqueda.trim().toLowerCase();
   const ts = visibles()
-    .filter(t => E.verTerminadas || t.fin >= HOY)
+    .filter(t => E.verTerminadas || (t.fin >= HOY && t.estado !== 'Terminada'))
     .filter(t => !q || [t.proyecto, t.ubicacion, t.equipo, t.observaciones].join(' ').toLowerCase().includes(q))
     .sort((a, b) => a.inicio.localeCompare(b.inicio) || a.proyecto.localeCompare(b.proyecto, 'es'));
   if (!ts.length) {
@@ -727,12 +902,16 @@ function htmlLista() {
 
 function tarjeta(t) {
   const maps = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(t.ubicacion);
-  return `<article class="tarea t-${CLASE[t.tipo]}" data-id="${esc(t.id)}" tabindex="0" aria-label="Editar ${esc(t.tipo)}: ${esc(t.proyecto)}">
-    <span class="tipo">${t.tipo}</span>
+  const av = E.avisos.get(t.id), fab = fabDe(t);
+  const ce = { 'En curso': 'e-cur', 'Terminada': 'e-ter' }[t.estado];
+  return `<article class="tarea t-${CLASE[t.tipo]}${t.estado === 'Terminada' ? ' terminada' : ''}" data-id="${esc(t.id)}" tabindex="0" aria-label="Editar ${esc(t.tipo)}: ${esc(t.proyecto)}">
+    <span class="tipo">${t.tipo}${ce ? `<em class="estado-t ${ce}">${t.estado}</em>` : ''}</span>
     <span class="proy">${esc(t.proyecto)}</span>
     <span class="fechas">${corto(t.inicio)} a ${corto(t.fin)}, ${plural(t.duracion, 'día laborable', 'días laborables')}</span>
     ${t.ubicacion ? `<span class="dato"><b>Ubicación:</b> <a href="${maps}" target="_blank" rel="noopener">${esc(t.ubicacion)}</a></span>` : ''}
     ${t.equipo ? `<span class="dato"><b>Equipo:</b> ${esc(t.equipo)}</span>` : ''}
+    ${fab ? `<span class="dato">${ICO.enlace}<b>Después de:</b> ${esc(fab.proyecto)} (acaba el ${dm(fab.fin)})</span>` : ''}
+    ${av ? lineasAviso(av).map(x => `<span class="aviso-t">${ICO.aviso}${esc(x)}</span>`).join('') : ''}
     ${t.observaciones ? `<span class="obs">${esc(t.observaciones)}</span>` : ''}
   </article>`;
 }
@@ -742,6 +921,75 @@ const dlg = $('#dlg'), form = $('#form');
 let confirmarBorrado = false;
 
 function tipoElegido() { const r = form.querySelector('input[name=tipo]:checked'); return r ? r.value : ''; }
+function estadoElegido() { const r = form.querySelector('input[name=estado]:checked'); return r ? r.value : 'Pendiente'; }
+let depAuto = false, guardarIgualmente = false;
+
+function datosForm() {
+  const tipo = tipoElegido();
+  return {
+    id: E.editId, tipo,
+    proyecto: $('#fProyecto').value.trim(),
+    inicio: $('#fInicio').value,
+    duracion: parseInt($('#fDuracion').value, 10),
+    ubicacion: $('#fUbicacion').value.trim(),
+    equipo: $('#fEquipo').value.trim(),
+    observaciones: $('#fObs').value.trim(),
+    estado: estadoElegido(),
+    dependeDe: tipo === 'Instalación' ? $('#fDepende').value : ''
+  };
+}
+
+function rellenarFabricaciones(sel) {
+  const fabs = E.tareas.filter(t => t.tipo === 'Fabricación').sort((a, b) => b.inicio.localeCompare(a.inicio));
+  $('#fDepende').innerHTML = '<option value="">Ninguna</option>' +
+    fabs.map(f => `<option value="${esc(f.id)}">${esc(f.proyecto)} (${dm(f.inicio)} – ${dm(f.fin)})</option>`).join('');
+  $('#fDepende').value = sel && fabs.some(f => f.id === sel) ? sel : '';
+}
+
+// Avisos del formulario: equipo ocupado y fabricación previa
+function actualizarAvisosForm() {
+  const d = datosForm();
+  $('#campoDep').hidden = d.tipo !== 'Instalación';
+  if (d.tipo === 'Instalación' && depAuto && !$('#fDepende').value && d.proyecto) {
+    const f = E.tareas.find(x => x.tipo === 'Fabricación' && normEq(x.proyecto) === normEq(d.proyecto));
+    if (f) { $('#fDepende').value = f.id; d.dependeDe = f.id; }
+  }
+  const r = d.inicio && d.duracion >= 1 ? calcularFin(d.inicio, d.duracion) : null;
+  const prov = Object.assign({}, d, { fin: r ? r.fin : d.inicio, id: d.id || '__nueva__' });
+  let hay = false;
+
+  const ch = r ? choquesDe(prov) : [];
+  const ae = $('#avisoEquipo');
+  ae.hidden = !ch.length;
+  if (ch.length) {
+    hay = true;
+    ae.innerHTML = `${ICO.aviso}<b>${esc(d.equipo)}</b> ya tiene otra tarea esos días:<ul>${
+      ch.map(o => `<li>${esc(o.proyecto)} (${o.tipo.toLowerCase()}), ${dm(o.inicio)} – ${dm(o.fin)}</li>`).join('')}</ul>`;
+  }
+
+  const ad = $('#ayudaDep'), f = fabDe(prov);
+  ad.hidden = !f || d.tipo !== 'Instalación';
+  ad.classList.remove('mal');
+  if (f && d.tipo === 'Instalación') {
+    if (r && prov.inicio <= f.fin && d.estado !== 'Terminada') {
+      hay = true;
+      const sig = siguienteLab(sumar(f.fin, 1));
+      ad.classList.add('mal');
+      ad.innerHTML = `${ICO.aviso}La fabricación acaba el ${largo(f.fin).toLowerCase()} y esta instalación empieza antes.
+        <br><button type="button" data-mover="${sig}">Empezar el ${dm(sig)}</button>`;
+    } else {
+      ad.innerHTML = `La fabricación acaba el ${largo(f.fin).toLowerCase()}.`;
+    }
+  }
+  E.formAvisos = hay;
+}
+
+function pintarHistorial(id) {
+  const l = id ? E.historial.filter(x => x.id === id).slice(0, 8) : [];
+  $('#histTarea').hidden = !l.length;
+  $('#histLista').innerHTML = l.map(x => `<li><b>${fechaHora(x.fecha)}</b>, ${esc(nombreUsuario(x.usuario))}: ${esc(x.accion)}${
+    x.detalle ? `<span>${esc(x.detalle)}</span>` : ''}</li>`).join('');
+}
 
 function abrirForm(t, inicio) {
   E.editId = t ? t.id : null;
@@ -755,6 +1003,13 @@ function abrirForm(t, inicio) {
   $('#fUbicacion').value = t ? t.ubicacion : '';
   $('#fEquipo').value = t ? t.equipo : '';
   $('#fObs').value = t ? t.observaciones : '';
+  form.querySelectorAll('input[name=estado]').forEach(r => r.checked = r.value === (t ? t.estado : 'Pendiente'));
+  rellenarFabricaciones(t ? t.dependeDe : '');
+  depAuto = !t;
+  guardarIgualmente = false;
+  $('#btnGuardar').textContent = 'Guardar tarea';
+  pintarHistorial(t ? t.id : null);
+  setTimeout(actualizarAvisosForm, 0);
   $('#btnEliminar').hidden = !t;
   $('#btnEliminar').textContent = 'Eliminar tarea';
   $('#formError').hidden = true;
@@ -795,32 +1050,37 @@ function actualizarFin() {
     ${saltos.length ? `<small>Se saltan ${saltos.join(' y ')}</small>` : ''}`;
 }
 
-form.addEventListener('input', actualizarFin);
-form.addEventListener('change', actualizarFin);
-$('#avisoInicio').addEventListener('click', e => {
+function alCambiarForm() {
+  actualizarFin();
+  actualizarAvisosForm();
+  if (guardarIgualmente) { guardarIgualmente = false; $('#btnGuardar').textContent = 'Guardar tarea'; $('#formError').hidden = true; }
+}
+$('#fDepende').addEventListener('change', () => { depAuto = false; });
+form.addEventListener('input', alCambiarForm);
+form.addEventListener('change', alCambiarForm);
+form.addEventListener('click', e => {
   const b = e.target.closest('[data-mover]');
-  if (b) { $('#fInicio').value = b.dataset.mover; actualizarFin(); }
+  if (b) { $('#fInicio').value = b.dataset.mover; alCambiarForm(); }
 });
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
   const err = $('#formError');
-  const datos = {
-    id: E.editId,
-    tipo: tipoElegido(),
-    proyecto: $('#fProyecto').value.trim(),
-    inicio: $('#fInicio').value,
-    duracion: parseInt($('#fDuracion').value, 10),
-    ubicacion: $('#fUbicacion').value.trim(),
-    equipo: $('#fEquipo').value.trim(),
-    observaciones: $('#fObs').value.trim()
-  };
+  const datos = datosForm();
   let msg = '';
   if (!datos.tipo) msg = 'Elige el tipo de tarea.';
   else if (!datos.proyecto) msg = 'Escribe el nombre del proyecto.';
   else if (!datos.inicio) msg = 'Elige la fecha de inicio.';
   else if (!(datos.duracion >= 1 && datos.duracion <= 500)) msg = 'La duración debe estar entre 1 y 500 días laborables.';
   if (msg) { err.textContent = msg; err.hidden = false; return; }
+  actualizarAvisosForm();
+  if (E.formAvisos && !guardarIgualmente) {
+    guardarIgualmente = true;
+    $('#btnGuardar').textContent = 'Guardar igualmente';
+    err.textContent = 'Revisa los avisos en rojo. Si está bien así, pulsa «Guardar igualmente».';
+    err.hidden = false;
+    return;
+  }
 
   const btn = $('#btnGuardar');
   btn.disabled = true; btn.textContent = 'Guardando…'; err.hidden = true;
@@ -833,10 +1093,11 @@ form.addEventListener('submit', async e => {
     render();
     dlg.close();
     toast(datos.id ? 'Tarea actualizada' : 'Tarea guardada');
+    if (datos.tipo === 'Fabricación' && datos.id) revisarInstalaciones(datos.id);
   } catch (ex) {
     err.textContent = (ex && ex.message) || String(ex); err.hidden = false;
   } finally {
-    btn.disabled = false; btn.textContent = 'Guardar tarea';
+    btn.disabled = false; btn.textContent = guardarIgualmente && dlg.open ? 'Guardar igualmente' : 'Guardar tarea';
   }
 });
 
@@ -861,7 +1122,7 @@ function marcarSel(id) {
   if (id) document.querySelectorAll('.tl-tarea').forEach(n => { if (n.dataset.id === id) n.classList.add('sel'); });
 }
 dlg.addEventListener('close', () => { document.body.classList.remove('panel'); E.editId = null; marcarSel(null); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && dlg.open && dlg.classList.contains('lateral')) dlg.close(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && dlg.open && dlg.classList.contains('lateral') && !$('#dlgConf').open) dlg.close(); });
 
 /* ---------- Navegación y eventos ---------- */
 function moverMes(n) {
@@ -885,6 +1146,7 @@ document.addEventListener('click', e => {
   if (v) { E.vista = v.dataset.vista; render(); return; }
   const tp = e.target.closest('[data-tipo]');
   if (tp) { const t = tp.dataset.tipo; E.filtro.has(t) ? E.filtro.delete(t) : E.filtro.add(t); render(); return; }
+  if (e.target.closest('#btnAvisos')) { siguienteAviso(); return; }
   const es = e.target.closest('[data-escala]');
   if (es) { ESC = es.dataset.escala; try { localStorage.setItem('plan-escala', ESC); } catch (x) {} render(); return; }
   const nueva = e.target.closest('[data-nueva]');
