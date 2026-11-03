@@ -220,6 +220,17 @@ fieldset.bloque legend{color:var(--c);font-weight:700;padding:0 6px}
 .sem-mapa .ico{color:var(--cian-texto);width:16px;height:16px;margin:0}
 .sem-vacio{margin:0;color:var(--suave);background:var(--superficie);border:1px dashed var(--linea);border-radius:8px;padding:10px 12px}
 .sem-t .obs{font-size:14px;color:var(--suave);white-space:pre-wrap}
+.sem-acc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px}
+.sem-acc .sem-mapa{margin-top:0}
+.btn-terminar{display:inline-flex;align-items:center;gap:6px;border:2px solid #2F8A3A;background:none;color:#2A7A33;
+  font-weight:700;font-size:14px;padding:6px 12px;border-radius:8px;margin-left:auto}
+.btn-terminar .ico{width:16px;height:16px;margin:0}
+.btn-terminar:hover{background:#2F8A3A;color:#fff}
+@media (prefers-color-scheme: dark){.btn-terminar{color:#7BD487;border-color:#4CAF50}}
+.sem-retraso h2{color:var(--error)}
+.sem-retraso h2 .ico{width:18px;height:18px;margin-right:2px}
+.sem-retraso .sem-t{border-color:rgba(208,53,63,.45)}
+.sem-cab .tarde{color:var(--error)}
 @media (max-width:520px){.vistas button{padding:4px 7px;font-size:13px}}
 
 /* Estado, avisos y dependencias */
@@ -594,15 +605,19 @@ function fabDe(t) {
 }
 function antesDeFab(t) { const f = fabDe(t); return f && t.estado !== 'Terminada' && t.inicio <= f.fin ? f : null; }
 function instalacionesDe(fabId) { return E.tareas.filter(t => t.tipo === 'Instalación' && t.dependeDe === fabId); }
+const retrasada = t => t.estado !== 'Terminada' && t.fin < HOY;
 function calcularAvisos() {
   E.avisos = new Map();
   E.tareas.forEach(t => {
-    const c = choquesDe(t), f = antesDeFab(t);
-    if (c.length || f) E.avisos.set(t.id, { choques: c, fab: f });
+    const c = choquesDe(t), f = antesDeFab(t), r = retrasada(t);
+    if (c.length || f || r) E.avisos.set(t.id, { choques: c, fab: f, retraso: r });
   });
 }
-function lineasAviso(a) {
-  const l = a.choques.map(o => `${o.equipo} también está en ${o.proyecto} (${dm(o.inicio)} – ${dm(o.fin)})`);
+function lineasAviso(a, t) {
+  const l = [];
+  if (a.retraso && t) l.push(`Retrasada: debía acabar el ${dm(t.fin)} y no está marcada como terminada`);
+  else if (a.retraso) l.push('Retrasada: ya pasó su fecha de fin y no está marcada como terminada');
+  l.push(...a.choques.map(o => `${o.equipo} también está en ${o.proyecto} (${dm(o.inicio)} – ${dm(o.fin)})`));
   if (a.fab) l.push(`Empieza antes de que termine su fabricación (${a.fab.proyecto}, acaba el ${dm(a.fab.fin)})`);
   return l;
 }
@@ -628,6 +643,7 @@ document.addEventListener('change', e => {
 
 /* ---------- Vista «Hoy y esta semana» ---------- */
 const fSem = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+ICO.check = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 ICO.mapa = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
 function htmlSemana() {
   const dias = [];
@@ -635,6 +651,11 @@ function htmlSemana() {
   const vs = visibles().filter(t => t.estado !== 'Terminada');
   const manana = sumar(HOY, 1);
   let h = '';
+  const atrasadas = visibles().filter(retrasada).sort((a, b) => a.fin.localeCompare(b.fin));
+  if (atrasadas.length) {
+    h += `<section class="sem-dia sem-retraso"><h2>${ICO.aviso}Retrasadas<small>${plural(atrasadas.length, 'tarea sin terminar', 'tareas sin terminar')}</small></h2>
+      <div class="sem-lista">${atrasadas.map(t => tarjetaSemana(t, null)).join('')}</div></section>`;
+  }
   if (!laborable(HOY)) {
     const f = E.festivos.get(HOY);
     h += `<p class="nota">Hoy no es laborable${f && !finde(HOY) ? ' (' + esc(f.descripcion) + ')' : ''}. Estos son los próximos días de trabajo.</p>`;
@@ -654,11 +675,16 @@ function tarjetaSemana(t, d) {
   const av = E.avisos.get(t.id);
   const maps = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(t.ubicacion);
   return `<article class="sem-t t-${CLASE[t.tipo]}" data-id="${esc(t.id)}" tabindex="0" aria-label="Abrir ${esc(t.tipo)}: ${esc(t.proyecto)}">
-    <div class="sem-cab"><span class="tipo">${t.tipo}${t.estado === 'En curso' ? ', en curso' : ''}</span><span class="dias">Día ${contarLab(t.inicio, d)} de ${t.duracion}</span></div>
+    <div class="sem-cab"><span class="tipo">${t.tipo}${t.estado === 'En curso' ? ', en curso' : ''}</span>${d
+      ? `<span class="dias">Día ${contarLab(t.inicio, d)} de ${t.duracion}</span>`
+      : `<span class="dias tarde">Debía acabar el ${dm(t.fin)}</span>`}</div>
     <span class="proy">${av ? ICO.aviso : ''}${esc(t.proyecto)}</span>
     ${t.equipo ? `<span class="eq">${esc(t.equipo)}</span>` : ''}
-    ${t.ubicacion ? `<a class="sem-mapa" href="${maps}" target="_blank" rel="noopener">${ICO.mapa}Cómo llegar: ${esc(t.ubicacion)}</a>` : ''}
     ${t.observaciones ? `<span class="obs">${esc(t.observaciones)}</span>` : ''}
+    <div class="sem-acc">
+      ${t.ubicacion ? `<a class="sem-mapa" href="${maps}" target="_blank" rel="noopener">${ICO.mapa}Cómo llegar: ${esc(t.ubicacion)}</a>` : ''}
+      <button type="button" class="btn-terminar" data-terminar="${esc(t.id)}">${ICO.check}Terminar</button>
+    </div>
   </article>`;
 }
 
@@ -737,7 +763,7 @@ function htmlGantt() {
   let h = `<div class="tl-barra"><div class="tl-barra-izq"><div class="escala" role="group" aria-label="Escala">${
     Object.keys(ESCALAS).map(k => `<button type="button" data-escala="${k}" aria-pressed="${k === ESC}">${NOM_ESC[k]}</button>`).join('')
   }</div>${selEquipoHTML()}${pendientes.length ? `<button type="button" class="chip-aviso" id="btnAvisos"
-    title="Equipos con dos tareas a la vez o instalaciones que empiezan antes de su fabricación. Pulsa para ir a cada una.">${ICO.aviso}${plural(pendientes.length, 'aviso', 'avisos')}</button>` : ''}</div><span class="tl-ayuda"><span class="ayuda-raton">Arrastra una tarea para moverla o su borde derecho para alargarla. Arrastra el fondo o usa la barra de abajo para cambiar de mes.</span><span class="ayuda-tactil">Usa la barra de abajo o desliza el diagrama para moverte entre meses.</span></span></div>`;
+    title="Tareas retrasadas, equipos con dos tareas a la vez o instalaciones que empiezan antes de su fabricación. Pulsa para ir a cada una.">${ICO.aviso}${plural(pendientes.length, 'aviso', 'avisos')}</button>` : ''}</div><span class="tl-ayuda"><span class="ayuda-raton">Arrastra una tarea para moverla o su borde derecho para alargarla. Arrastra el fondo o usa la barra de abajo para cambiar de mes.</span><span class="ayuda-tactil">Usa la barra de abajo o desliza el diagrama para moverte entre meses.</span></span></div>`;
   h += `<div class="tl esc-${ESC}" id="tl" style="--dpx:${dpx}px"><div class="tl-lienzo" style="width:calc(var(--izq) + ${W}px)">`;
 
   // Cabecera: meses y días
@@ -786,7 +812,7 @@ function htmlGantt() {
       <div class="tl-zona" style="width:${W}px;height:${n * 48 + 8}px">`;
     out.forEach(o => {
       const av = E.avisos.get(o.t.id), fab = fabDe(o.t);
-      const tip = [o.p, o.s, o.t.ubicacion, fab ? 'Va después de: ' + fab.proyecto : '', ...(av ? lineasAviso(av).map(x => '⚠ ' + x) : [])].filter(Boolean).join('\n');
+      const tip = [o.p, o.s, o.t.ubicacion, fab ? 'Va después de: ' + fab.proyecto : '', ...(av ? lineasAviso(av, o.t).map(x => '⚠ ' + x) : [])].filter(Boolean).join('\n');
       const cls = 'tl-tarea' + (av ? ' choque' : '') + (o.t.estado === 'Terminada' ? ' terminada' : '') + (o.t.estado === 'En curso' ? ' encurso' : '');
       h += `<div class="${cls}" data-id="${esc(o.t.id)}" tabindex="0" role="button" title="${esc(tip)}"
         aria-label="Editar ${esc(tp)}: ${esc(o.p)}, ${esc(o.s)}" style="left:${o.x}px;top:${8 + o.f * 48}px">
@@ -863,7 +889,7 @@ const ARR = { el: null, x: 0, s: 0, movido: false };
 
 // Tareas con aviso que aún no han terminado, por orden de fecha
 function avisosPendientes() {
-  return visibles().filter(t => E.avisos.has(t.id) && t.fin >= HOY).sort((a, b) => a.inicio.localeCompare(b.inicio));
+  return visibles().filter(t => E.avisos.has(t.id) && (t.fin >= HOY || E.avisos.get(t.id).retraso)).sort((a, b) => a.inicio.localeCompare(b.inicio));
 }
 let avisoIdx = -1;
 function siguienteAviso() {
@@ -874,7 +900,7 @@ function siguienteAviso() {
   if (!nodo) return;
   nodo.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
   nodo.classList.remove('resaltar'); void nodo.offsetWidth; nodo.classList.add('resaltar');
-  toast(`${t.proyecto}: ${lineasAviso(E.avisos.get(t.id))[0]}`);
+  toast(`${t.proyecto}: ${lineasAviso(E.avisos.get(t.id), t)[0]}`);
 }
 
 // El diagrama ocupa el alto disponible de la pantalla y se desplaza por dentro,
@@ -959,7 +985,7 @@ async function cambiarFechas(id, p, conDeshacer, accion, silencioso) {
     if (dlg.open && E.editId === id) abrirForm(nueva);
     if (!silencioso) {
       const av = E.avisos.get(id);
-      const msg = `${t.proyecto}: ${corto(p.inicio)} a ${corto(p.fin)}` + (av ? `. Aviso: ${lineasAviso(av)[0]}` : '');
+      const msg = `${t.proyecto}: ${corto(p.inicio)} a ${corto(p.fin)}` + (av ? `. Aviso: ${lineasAviso(av, nueva)[0]}` : '');
       toast(msg, conDeshacer ? { texto: 'Deshacer', fn: () => cambiarFechas(id, antes, false, 'Cambio deshecho') } : null);
       if (nueva && nueva.tipo === 'Fabricación') revisarInstalaciones(id);
     }
@@ -968,6 +994,25 @@ async function cambiarFechas(id, p, conDeshacer, accion, silencioso) {
     Object.assign(t, antes); render();
     toast('No se pudo guardar el cambio: ' + ((ex && ex.message) || ex));
     return false;
+  }
+}
+
+// Cambia solo el estado de una tarea (por ejemplo, «Terminar» desde la vista Semana)
+async function cambiarEstado(id, estado, conDeshacer) {
+  const t = E.tareas.find(x => x.id === id); if (!t) return;
+  const antes = t.estado;
+  if (antes === estado) return;
+  t.estado = estado;
+  render();
+  try {
+    aplicar(await llamar('guardarTarea', Object.assign({}, t, {
+      accion: estado === 'Terminada' ? 'Marcada como terminada' : 'Estado cambiado'
+    })));
+    toast(`${t.proyecto}: ${estado === 'Terminada' ? 'terminada' : 'ahora ' + estado.toLowerCase()}`,
+      conDeshacer ? { texto: 'Deshacer', fn: () => cambiarEstado(id, antes, false) } : null);
+  } catch (ex) {
+    t.estado = antes; render();
+    toast('No se pudo guardar: ' + ((ex && ex.message) || ex));
   }
 }
 
@@ -1018,7 +1063,7 @@ function irA(fecha, alinear) {
 function htmlLista() {
   const q = E.busqueda.trim().toLowerCase();
   const ts = visibles()
-    .filter(t => E.verTerminadas || (t.fin >= HOY && t.estado !== 'Terminada'))
+    .filter(t => E.verTerminadas || t.estado !== 'Terminada')
     .filter(t => !q || [t.proyecto, t.ubicacion, t.equipo, t.observaciones].join(' ').toLowerCase().includes(q))
     .sort((a, b) => a.inicio.localeCompare(b.inicio) || a.proyecto.localeCompare(b.proyecto, 'es'));
   if (!ts.length) {
@@ -1050,7 +1095,7 @@ function tarjeta(t) {
     ${t.ubicacion ? `<span class="dato"><b>Ubicación:</b> <a href="${maps}" target="_blank" rel="noopener">${esc(t.ubicacion)}</a></span>` : ''}
     ${t.equipo ? `<span class="dato"><b>Equipo:</b> ${esc(t.equipo)}</span>` : ''}
     ${fab ? `<span class="dato">${ICO.enlace}<b>Después de:</b> ${esc(fab.proyecto)} (acaba el ${dm(fab.fin)})</span>` : ''}
-    ${av ? lineasAviso(av).map(x => `<span class="aviso-t">${ICO.aviso}${esc(x)}</span>`).join('') : ''}
+    ${av ? lineasAviso(av, t).map(x => `<span class="aviso-t">${ICO.aviso}${esc(x)}</span>`).join('') : ''}
     ${t.observaciones ? `<span class="obs">${esc(t.observaciones)}</span>` : ''}
   </article>`;
 }
@@ -1286,6 +1331,8 @@ document.addEventListener('click', e => {
   const tp = e.target.closest('[data-tipo]');
   if (tp) { const t = tp.dataset.tipo; E.filtro.has(t) ? E.filtro.delete(t) : E.filtro.add(t); render(); return; }
   if (e.target.closest('#btnAvisos')) { siguienteAviso(); return; }
+  const term = e.target.closest('[data-terminar]');
+  if (term) { cambiarEstado(term.dataset.terminar, 'Terminada', true); return; }
   const es = e.target.closest('[data-escala]');
   if (es) { ESC = es.dataset.escala; try { localStorage.setItem('plan-escala', ESC); } catch (x) {} render(); return; }
   const nueva = e.target.closest('[data-nueva]');
