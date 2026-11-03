@@ -182,6 +182,46 @@ main{max-width:1100px;margin:0 auto;padding:14px 12px}
   .tl-ayuda{display:none}
 }
 
+/* Botones flotantes */
+.fabs{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;gap:10px;align-items:center}
+.fabs .nueva{position:static}
+.nueva-proy{border:2px solid var(--pc-cian);background:var(--superficie);color:var(--cian-texto);font-weight:700;font-size:15px;
+  padding:12px 16px;border-radius:12px;box-shadow:0 6px 18px rgba(3,80,95,.2)}
+@media (max-width:520px){.nueva-proy .largo{display:none}.fabs{right:12px;gap:8px}.fabs .nueva,.nueva-proy{padding:12px 14px;font-size:15px}}
+
+/* Nuevo proyecto */
+fieldset.bloque{border:1px solid var(--linea);border-left:5px solid var(--c);border-radius:10px;padding:10px 12px 12px;display:grid;gap:10px}
+fieldset.bloque legend{color:var(--c);font-weight:700;padding:0 6px}
+.resumen-proy{display:grid;gap:6px}
+.resumen-proy .linea-r{display:flex;gap:10px;align-items:baseline;background:var(--fondo);border-left:5px solid var(--c);border-radius:8px;padding:8px 10px}
+.resumen-proy .linea-r b{color:var(--c);min-width:92px}
+
+/* Filtro por equipo */
+.sel-eq{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;color:var(--suave)}
+.sel-eq select{width:auto;max-width:230px;padding:6px 10px;border-radius:8px;border:1px solid var(--linea);background:var(--superficie);font-weight:600;color:var(--tinta)}
+.sel-eq.activo select{border-color:var(--pc-cian);box-shadow:0 0 0 2px rgba(3,161,190,.25)}
+.sem-barra{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 12px}
+
+/* Vista Semana */
+.sem-dia{margin-bottom:18px}
+.sem-dia h2{font-size:18px;display:flex;align-items:baseline;gap:8px;margin:0 0 8px}
+.sem-dia h2 small{font-family:inherit;font-weight:600;font-size:14px;color:var(--suave)}
+.sem-dia.es-hoy h2{color:var(--cian-texto)}
+.sem-lista{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.sem-t{background:var(--superficie);border:1px solid var(--linea);border-left:6px solid var(--c);border-radius:8px;padding:10px 12px;
+  display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.sem-cab{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
+.sem-cab .tipo{color:var(--c)}
+.sem-cab .dias{color:var(--suave)}
+.sem-t .proy{font-size:18px;font-weight:700;color:var(--fuerte);line-height:1.25}
+.sem-t .eq{font-weight:600}
+.sem-mapa{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:8px 12px;border-radius:8px;
+  background:var(--fondo);color:var(--cian-texto);font-weight:700;text-decoration:none;font-size:14px}
+.sem-mapa .ico{color:var(--cian-texto);width:16px;height:16px;margin:0}
+.sem-vacio{margin:0;color:var(--suave);background:var(--superficie);border:1px dashed var(--linea);border-radius:8px;padding:10px 12px}
+.sem-t .obs{font-size:14px;color:var(--suave);white-space:pre-wrap}
+@media (max-width:520px){.vistas button{padding:4px 7px;font-size:13px}}
+
 /* Estado, avisos y dependencias */
 .e-pen{--c:var(--suave);--cf:#6B7079}
 .e-cur{--c:var(--pc-cian);--cf:#02829A}
@@ -306,7 +346,7 @@ textarea{min-height:84px;resize:vertical}
 .tl-tarea.moviendo .s{color:var(--fuerte);font-weight:700}
 .tl.arrastrando-tarea{cursor:grabbing;user-select:none}
 body.panel{padding-right:440px}
-body.panel .nueva{display:none}
+body.panel .fabs{display:none}
 dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:440px;height:100%;max-height:100%;
   border-radius:0;border-left:1px solid var(--linea);box-shadow:-10px 0 28px rgba(30,35,45,.14);z-index:30;overflow:auto}
 </style>
@@ -329,6 +369,7 @@ dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:44
       <button type="button" id="mesHoy" class="hoy">Hoy</button>
       <div class="vistas" role="group" aria-label="Vista">
         <button type="button" data-vista="mes" aria-pressed="true">Gantt</button>
+        <button type="button" data-vista="semana" aria-pressed="false">Semana</button>
         <button type="button" data-vista="lista" aria-pressed="false">Lista</button>
       </div>
     </div>
@@ -344,7 +385,45 @@ dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:44
 
 <main id="main"><p class="cargando">Cargando planificación…</p></main>
 
-<button type="button" class="nueva" id="btnNueva">+ Nueva tarea</button>
+<div class="fabs">
+  <button type="button" class="nueva-proy" id="btnProyecto">+ Proyecto<span class="largo"> completo</span></button>
+  <button type="button" class="nueva" id="btnNueva">+ Nueva tarea</button>
+</div>
+
+<dialog id="dlgProy" aria-labelledby="titProy">
+  <form id="formProy" novalidate>
+    <div class="form-cab">
+      <h2 id="titProy">Nuevo proyecto completo</h2>
+      <button type="button" class="cerrar" data-cerrar-proy aria-label="Cerrar">×</button>
+    </div>
+    <p class="nota-campo">Crea a la vez la fabricación y la instalación, ya enlazadas. La instalación empieza al acabar la fabricación.</p>
+    <label><span>Nombre del proyecto</span><input type="text" id="pProyecto" list="dlProyectos" autocomplete="off"></label>
+    <label><span>Ubicación</span><input type="text" id="pUbicacion" autocomplete="off" placeholder="Dirección o municipio"></label>
+    <fieldset class="bloque t-fab">
+      <legend>Fabricación</legend>
+      <div class="dos">
+        <label><span>Fecha de inicio</span><input type="date" id="pFabInicio"></label>
+        <label><span>Duración (días)</span><input type="number" id="pFabDur" min="1" max="500" inputmode="numeric"></label>
+      </div>
+      <label><span>Equipo</span><input type="text" id="pFabEquipo" list="dlEquipos" autocomplete="off"></label>
+    </fieldset>
+    <fieldset class="bloque t-ins">
+      <legend>Instalación</legend>
+      <div class="dos">
+        <label><span>Días libres entre medias</span><input type="number" id="pMargen" min="0" max="60" inputmode="numeric"></label>
+        <label><span>Duración (días)</span><input type="number" id="pInsDur" min="1" max="500" inputmode="numeric"></label>
+      </div>
+      <label><span>Equipo</span><input type="text" id="pInsEquipo" list="dlEquipos" autocomplete="off"></label>
+    </fieldset>
+    <label><span>Observaciones</span><textarea id="pObs"></textarea></label>
+    <div class="resumen-proy" id="pResumen"></div>
+    <p class="error" id="pError" hidden></p>
+    <div class="acciones">
+      <button type="submit" class="primario" id="pGuardar">Crear proyecto</button>
+      <button type="button" class="secundario" data-cerrar-proy>Cancelar</button>
+    </div>
+  </form>
+</dialog>
 
 <dialog id="dlg" aria-labelledby="titForm">
   <form id="form" novalidate>
@@ -440,7 +519,12 @@ const HOY = hoyIso();
 const E = {
   tareas: [], festivos: new Map(), equipos: [],
   anio: +HOY.slice(0, 4), mes: +HOY.slice(5, 7) - 1,
-  vista: 'mes', filtro: new Set(TIPOS), dia: HOY,
+  vista: (() => {
+    try { const v = localStorage.getItem('plan-vista'); if (['mes', 'semana', 'lista'].includes(v)) return v; } catch (e) {}
+    return matchMedia('(max-width: 640px)').matches ? 'semana' : 'mes';
+  })(),
+  filtroEquipo: '',
+  filtro: new Set(TIPOS), dia: HOY,
   busqueda: '', verTerminadas: false, editId: null, cargado: false
 };
 
@@ -486,7 +570,8 @@ function aplicar(d) {
 }
 
 /* ---------- Pintado ---------- */
-const visibles = () => E.tareas.filter(t => E.filtro.has(t.tipo));
+const pasaEquipo = t => !E.filtroEquipo || normEq(t.equipo) === normEq(E.filtroEquipo);
+const visibles = () => E.tareas.filter(t => E.filtro.has(t.tipo) && pasaEquipo(t));
 
 /* ---------- Avisos: equipos ocupados e instalaciones antes de su fabricación ---------- */
 const ICO = {
@@ -524,13 +609,66 @@ function lineasAviso(a) {
 const nombreUsuario = u => String(u || '').split('@')[0] || 'alguien';
 function fechaHora(s) { const d = new Date(s); return isNaN(d) ? s : d.getDate() + ' ' + MESES[d.getMonth()].slice(0, 3).toLowerCase() + ', ' + fHora.format(d); }
 
+/* ---------- Filtro por equipo ---------- */
+function listaEquipos() {
+  const m = new Map();
+  [...E.equipos, ...E.tareas.map(t => t.equipo)].forEach(x => { const k = normEq(x); if (k && !m.has(k)) m.set(k, String(x).trim()); });
+  return [...m.values()].sort((a, b) => a.localeCompare(b, 'es'));
+}
+function selEquipoHTML() {
+  return `<label class="sel-eq${E.filtroEquipo ? ' activo' : ''}"><span>Equipo</span><select data-filtro-equipo>
+    <option value="">Todos</option>${listaEquipos().map(x =>
+      `<option value="${esc(x)}"${normEq(x) === normEq(E.filtroEquipo) ? ' selected' : ''}>${esc(x)}</option>`).join('')}
+  </select></label>`;
+}
+document.addEventListener('change', e => {
+  const s = e.target.closest('[data-filtro-equipo]');
+  if (s) { E.filtroEquipo = s.value; render(); }
+});
+
+/* ---------- Vista «Hoy y esta semana» ---------- */
+const fSem = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+ICO.mapa = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
+function htmlSemana() {
+  const dias = [];
+  for (let d = laborable(HOY) ? HOY : siguienteLab(HOY); dias.length < 7; d = sumar(d, 1)) if (laborable(d)) dias.push(d);
+  const vs = visibles().filter(t => t.estado !== 'Terminada');
+  const manana = sumar(HOY, 1);
+  let h = '';
+  if (!laborable(HOY)) {
+    const f = E.festivos.get(HOY);
+    h += `<p class="nota">Hoy no es laborable${f && !finde(HOY) ? ' (' + esc(f.descripcion) + ')' : ''}. Estos son los próximos días de trabajo.</p>`;
+  }
+  dias.forEach(d => {
+    const ts = vs.filter(t => t.inicio <= d && d <= t.fin)
+      .sort((a, b) => normEq(a.equipo).localeCompare(normEq(b.equipo), 'es') || TIPOS.indexOf(a.tipo) - TIPOS.indexOf(b.tipo));
+    const fecha = fSem.format(utc(d));
+    const pre = d === HOY ? 'Hoy' : d === manana ? 'Mañana' : '';
+    h += `<section class="sem-dia${d === HOY ? ' es-hoy' : ''}"><h2>${pre || fecha.charAt(0).toUpperCase() + fecha.slice(1)}${pre ? `<small>${fecha}</small>` : ''}</h2>`;
+    h += ts.length ? `<div class="sem-lista">${ts.map(t => tarjetaSemana(t, d)).join('')}</div>` : `<p class="sem-vacio">Sin tareas.</p>`;
+    h += '</section>';
+  });
+  return h;
+}
+function tarjetaSemana(t, d) {
+  const av = E.avisos.get(t.id);
+  const maps = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(t.ubicacion);
+  return `<article class="sem-t t-${CLASE[t.tipo]}" data-id="${esc(t.id)}" tabindex="0" aria-label="Abrir ${esc(t.tipo)}: ${esc(t.proyecto)}">
+    <div class="sem-cab"><span class="tipo">${t.tipo}${t.estado === 'En curso' ? ', en curso' : ''}</span><span class="dias">Día ${contarLab(t.inicio, d)} de ${t.duracion}</span></div>
+    <span class="proy">${av ? ICO.aviso : ''}${esc(t.proyecto)}</span>
+    ${t.equipo ? `<span class="eq">${esc(t.equipo)}</span>` : ''}
+    ${t.ubicacion ? `<a class="sem-mapa" href="${maps}" target="_blank" rel="noopener">${ICO.mapa}Cómo llegar: ${esc(t.ubicacion)}</a>` : ''}
+    ${t.observaciones ? `<span class="obs">${esc(t.observaciones)}</span>` : ''}
+  </article>`;
+}
+
 function regletaHTML() {
   const inicioMes = `${E.anio}-${pad(E.mes + 1)}-01`;
   const finMes = aIso(new Date(Date.UTC(E.anio, E.mes + 1, 0)));
   return TIPOS.map(tp => {
     const n = E.vista === 'mes'
-      ? E.tareas.filter(t => t.tipo === tp && t.inicio <= finMes && t.fin >= inicioMes).length
-      : E.tareas.filter(t => t.tipo === tp && (E.verTerminadas || t.fin >= HOY)).length;
+      ? E.tareas.filter(t => t.tipo === tp && pasaEquipo(t) && t.inicio <= finMes && t.fin >= inicioMes).length
+      : E.tareas.filter(t => t.tipo === tp && pasaEquipo(t) && (E.verTerminadas || t.fin >= HOY)).length;
     return `<button type="button" class="t-${CLASE[tp]}" data-tipo="${tp}" aria-pressed="${E.filtro.has(tp)}">
       <span class="nom">${tp}</span><span class="n">${n}</span></button>`;
   }).join('');
@@ -547,7 +685,8 @@ function render() {
   if (!E.cargado) return;
   const tlPrevio = $('#tl');
   if (tlPrevio) E.tlY = tlPrevio.scrollTop;
-  $('#main').innerHTML = E.vista === 'mes' ? htmlGantt() : htmlLista();
+  $('#main').innerHTML = E.vista === 'mes' ? htmlGantt()
+    : `<div class="sem-barra">${selEquipoHTML()}</div>` + (E.vista === 'semana' ? htmlSemana() : htmlLista());
   if (E.vista === 'mes') { initTL(); if (dlg.open) marcarSel(E.editId); }
 }
 
@@ -597,7 +736,7 @@ function htmlGantt() {
   const pendientes = avisosPendientes();
   let h = `<div class="tl-barra"><div class="tl-barra-izq"><div class="escala" role="group" aria-label="Escala">${
     Object.keys(ESCALAS).map(k => `<button type="button" data-escala="${k}" aria-pressed="${k === ESC}">${NOM_ESC[k]}</button>`).join('')
-  }</div>${pendientes.length ? `<button type="button" class="chip-aviso" id="btnAvisos"
+  }</div>${selEquipoHTML()}${pendientes.length ? `<button type="button" class="chip-aviso" id="btnAvisos"
     title="Equipos con dos tareas a la vez o instalaciones que empiezan antes de su fabricación. Pulsa para ir a cada una.">${ICO.aviso}${plural(pendientes.length, 'aviso', 'avisos')}</button>` : ''}</div><span class="tl-ayuda"><span class="ayuda-raton">Arrastra una tarea para moverla o su borde derecho para alargarla. Arrastra el fondo o usa la barra de abajo para cambiar de mes.</span><span class="ayuda-tactil">Usa la barra de abajo o desliza el diagrama para moverte entre meses.</span></span></div>`;
   h += `<div class="tl esc-${ESC}" id="tl" style="--dpx:${dpx}px"><div class="tl-lienzo" style="width:calc(var(--izq) + ${W}px)">`;
 
@@ -641,7 +780,7 @@ function htmlGantt() {
   const tipos = TIPOS.filter(tp => E.filtro.has(tp));
   if (!tipos.length) h += `<div class="tl-vacio">Marca arriba algún tipo de tarea para verlo.</div>`;
   tipos.forEach(tp => {
-    const ts = E.tareas.filter(t => t.tipo === tp).sort((x, y) => x.inicio.localeCompare(y.inicio) || x.proyecto.localeCompare(y.proyecto, 'es'));
+    const ts = E.tareas.filter(t => t.tipo === tp && pasaEquipo(t)).sort((x, y) => x.inicio.localeCompare(y.inicio) || x.proyecto.localeCompare(y.proyecto, 'es'));
     const { out, n } = repartir(ts, a, dpx);
     h += `<div class="tl-carril t-${CLASE[tp]}"><div class="tl-nom"><div class="tl-nom-in"><b>${tp}</b><small>${plural(ts.length, 'tarea', 'tareas')}</small></div></div>
       <div class="tl-zona" style="width:${W}px;height:${n * 48 + 8}px">`;
@@ -724,7 +863,7 @@ const ARR = { el: null, x: 0, s: 0, movido: false };
 
 // Tareas con aviso que aún no han terminado, por orden de fecha
 function avisosPendientes() {
-  return E.tareas.filter(t => E.avisos.has(t.id) && t.fin >= HOY).sort((a, b) => a.inicio.localeCompare(b.inicio));
+  return visibles().filter(t => E.avisos.has(t.id) && t.fin >= HOY).sort((a, b) => a.inicio.localeCompare(b.inicio));
 }
 let avisoIdx = -1;
 function siguienteAviso() {
@@ -1143,7 +1282,7 @@ $('#verTerminadas').addEventListener('change', e => { E.verTerminadas = e.target
 
 document.addEventListener('click', e => {
   const v = e.target.closest('[data-vista]');
-  if (v) { E.vista = v.dataset.vista; render(); return; }
+  if (v) { E.vista = v.dataset.vista; try { localStorage.setItem('plan-vista', E.vista); } catch (x) {} render(); return; }
   const tp = e.target.closest('[data-tipo]');
   if (tp) { const t = tp.dataset.tipo; E.filtro.has(t) ? E.filtro.delete(t) : E.filtro.add(t); render(); return; }
   if (e.target.closest('#btnAvisos')) { siguienteAviso(); return; }
@@ -1188,6 +1327,80 @@ async function refrescar() {
   }
 }
 $('#btnRefrescar').addEventListener('click', refrescar);
+
+/* ---------- Nuevo proyecto completo ---------- */
+const dlgP = $('#dlgProy'), formP = $('#formProy');
+let crearIgual = false;
+function abrirProyecto() {
+  formP.reset();
+  $('#pFabInicio').value = laborable(HOY) ? HOY : siguienteLab(HOY);
+  $('#pFabDur').value = 5; $('#pInsDur').value = 3; $('#pMargen').value = 0;
+  crearIgual = false; $('#pGuardar').textContent = 'Crear proyecto'; $('#pError').hidden = true;
+  resumenProy();
+  dlgP.showModal();
+  setTimeout(() => $('#pProyecto').focus(), 50);
+}
+function calcProy() {
+  const fi = $('#pFabInicio').value, fd = parseInt($('#pFabDur').value, 10), id = parseInt($('#pInsDur').value, 10);
+  const m = Math.max(0, parseInt($('#pMargen').value, 10) || 0);
+  if (!fi || !(fd >= 1 && fd <= 500) || !(id >= 1 && id <= 500)) return null;
+  const fr = calcularFin(fi, fd); if (!fr) return null;
+  let ii = siguienteLab(sumar(fr.fin, 1));
+  for (let k = 0; k < m; k++) ii = siguienteLab(sumar(ii, 1));
+  const ir = calcularFin(ii, id); if (!ir) return null;
+  return {
+    fab: { id: '__f', tipo: 'Fabricación', inicio: laborable(fi) ? fi : siguienteLab(fi), fin: fr.fin, duracion: fd, equipo: $('#pFabEquipo').value.trim(), estado: 'Pendiente' },
+    ins: { id: '__i', tipo: 'Instalación', inicio: ii, fin: ir.fin, duracion: id, equipo: $('#pInsEquipo').value.trim(), estado: 'Pendiente' },
+    margen: m
+  };
+}
+function resumenProy() {
+  const p = calcProy(), box = $('#pResumen');
+  if (!p) { box.innerHTML = ''; E.proyAvisos = false; return; }
+  const linea = (t, cl) => `<div class="linea-r t-${cl}"><b>${t.tipo}</b><span>${corto(t.inicio)} a ${corto(t.fin)}, ${plural(t.duracion, 'día laborable', 'días laborables')}</span></div>`;
+  const av = [...choquesDe(p.fab).map(o => [p.fab, o]), ...choquesDe(p.ins).map(o => [p.ins, o])];
+  box.innerHTML = linea(p.fab, 'fab') + linea(p.ins, 'ins') + (av.length ? `<div class="aviso aviso-rojo">${ICO.aviso}Equipos ocupados:<ul>${
+    av.map(([t, o]) => `<li>${esc(t.equipo)} (${t.tipo.toLowerCase()}) ya está en ${esc(o.proyecto)}, ${dm(o.inicio)} – ${dm(o.fin)}</li>`).join('')}</ul></div>` : '');
+  E.proyAvisos = av.length > 0;
+}
+formP.addEventListener('input', () => {
+  resumenProy();
+  if (crearIgual) { crearIgual = false; $('#pGuardar').textContent = 'Crear proyecto'; $('#pError').hidden = true; }
+});
+document.querySelectorAll('[data-cerrar-proy]').forEach(b => b.addEventListener('click', () => dlgP.close()));
+$('#btnProyecto').addEventListener('click', abrirProyecto);
+formP.addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = $('#pError'), p = calcProy();
+  const proyecto = $('#pProyecto').value.trim();
+  let msg = '';
+  if (!proyecto) msg = 'Escribe el nombre del proyecto.';
+  else if (!p) msg = 'Revisa la fecha de inicio y las duraciones (entre 1 y 500 días).';
+  if (msg) { err.textContent = msg; err.hidden = false; return; }
+  if (E.proyAvisos && !crearIgual) {
+    crearIgual = true; $('#pGuardar').textContent = 'Crear igualmente';
+    err.textContent = 'Hay equipos ocupados esos días. Si está bien así, pulsa «Crear igualmente».'; err.hidden = false;
+    return;
+  }
+  const btn = $('#pGuardar');
+  btn.disabled = true; btn.textContent = 'Creando…'; err.hidden = true;
+  try {
+    const d = await llamar('crearProyecto', {
+      proyecto, ubicacion: $('#pUbicacion').value.trim(), observaciones: $('#pObs').value.trim(),
+      fabInicio: $('#pFabInicio').value, fabDuracion: p.fab.duracion, fabEquipo: p.fab.equipo,
+      insDuracion: p.ins.duracion, insEquipo: p.ins.equipo, margen: p.margen
+    });
+    aplicar(d);
+    E.tlCentro = p.fab.inicio; E.anio = +p.fab.inicio.slice(0, 4); E.mes = +p.fab.inicio.slice(5, 7) - 1;
+    render();
+    dlgP.close();
+    toast(`${proyecto}: fabricación e instalación creadas`);
+  } catch (ex) {
+    err.textContent = (ex && ex.message) || String(ex); err.hidden = false;
+  } finally {
+    btn.disabled = false; if (dlgP.open) btn.textContent = crearIgual ? 'Crear igualmente' : 'Crear proyecto';
+  }
+});
 
 let toastT;
 function toast(txt, accion) {
