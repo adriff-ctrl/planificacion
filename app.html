@@ -62,10 +62,25 @@ button{cursor:pointer}
 .centro{display:flex;align-items:center;gap:10px}
 .flecha,.hoy{border:1px solid var(--cab-linea);background:none;color:var(--cab-texto);height:38px;min-width:38px;border-radius:8px;font-weight:600;padding:0 10px}
 .flecha{font-size:20px;line-height:1}
+.refrescar{display:flex;align-items:center;gap:8px;border:1px solid var(--cab-linea);background:none;color:var(--cab-texto);
+  height:38px;border-radius:8px;padding:0 12px;font-weight:600;font-size:14px;white-space:nowrap}
+.refrescar:hover{border-color:var(--pc-cian)}
+.refrescar svg{width:18px;height:18px;flex:none;color:var(--pc-cian)}
+.refrescar.girando svg{animation:girar .8s linear infinite}
+@keyframes girar{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.refrescar.girando svg{animation:none;opacity:.5}}
+@media (max-width:760px){.refrescar .txt{display:none}.refrescar{padding:0 10px}}
+@media (max-width:520px){
+  .cab{padding-left:12px;padding-right:12px}
+  .marca img{height:32px}
+  .der{gap:5px}
+  .refrescar,.hoy{height:34px;min-width:34px;padding:0 8px}
+  .vistas button{padding:4px 9px;font-size:14px}
+}
 .hoy{font-size:15px}
 .mes-titulo{font-family:var(--cond);font-weight:800;font-size:clamp(24px,3vw,36px);line-height:1;margin:0;letter-spacing:-.02em;
   color:var(--cab-texto);text-align:center;min-width:9.6em;white-space:nowrap}
-@media (max-width:1100px){
+@media (max-width:1300px){
   .cab-top{grid-template-columns:1fr auto;row-gap:10px}
   .centro{grid-column:1 / -1;grid-row:2;justify-self:center}
   .der{grid-column:2}
@@ -266,6 +281,10 @@ dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:44
       <button type="button" class="flecha" id="mesSig" aria-label="Mes siguiente">›</button>
     </div>
     <div class="der">
+      <button type="button" id="btnRefrescar" class="refrescar" title="Cargar los últimos cambios">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+        <span class="txt" id="txtAct">Cargando…</span>
+      </button>
       <button type="button" id="mesHoy" class="hoy">Hoy</button>
       <div class="vistas" role="group" aria-label="Vista">
         <button type="button" data-vista="mes" aria-pressed="true">Gantt</button>
@@ -381,6 +400,7 @@ function llamar(fn, ...args) {
   return new Promise((ok, ko) => google.script.run.withSuccessHandler(ok).withFailureHandler(ko)[fn](...args));
 }
 function aplicar(d) {
+  marcarActualizado();
   E.tareas = d.tareas || [];
   E.festivos = new Map((d.festivos || []).map(f => [f.fecha, f]));
   E.equipos = d.equipos || [];
@@ -878,6 +898,34 @@ document.addEventListener('keydown', e => {
   const card = e.target.closest && e.target.closest('[data-id]');
   if (card && e.target === card) { e.preventDefault(); const t = E.tareas.find(x => x.id === card.dataset.id); if (t) abrirForm(t); }
 });
+
+/* ---------- Actualizar datos ---------- */
+let ultimaAct = null;
+const fHora = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
+const fCompleta = new Intl.DateTimeFormat('es-ES', { dateStyle: 'full', timeStyle: 'short' });
+function marcarActualizado() { ultimaAct = new Date(); pintarAct(); }
+function pintarAct() {
+  if (!ultimaAct) return;
+  const d = ultimaAct, esHoy = new Date().toDateString() === d.toDateString();
+  $('#txtAct').textContent = 'Actualizado ' + (esHoy ? '' : d.getDate() + ' ' + MESES[d.getMonth()].slice(0, 3).toLowerCase() + ', ') + fHora.format(d);
+  $('#btnRefrescar').title = 'Datos cargados el ' + fCompleta.format(d) + '. Pulsa para cargar los últimos cambios.';
+}
+async function refrescar() {
+  const b = $('#btnRefrescar');
+  if (b.classList.contains('girando')) return;
+  b.classList.add('girando');
+  $('#txtAct').textContent = 'Actualizando…';
+  try {
+    aplicar(await llamar('obtenerDatos'));
+    toast('Planificación actualizada');
+  } catch (ex) {
+    pintarAct();
+    toast('No se pudo actualizar: ' + ((ex && ex.message) || ex));
+  } finally {
+    b.classList.remove('girando');
+  }
+}
+$('#btnRefrescar').addEventListener('click', refrescar);
 
 let toastT;
 function toast(txt, accion) {
