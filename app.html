@@ -625,6 +625,18 @@ dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:44
 </dialog>
 
 <script>
+/* Si algo falla, se enseña el error en pantalla en lugar de quedarse cargando */
+function mostrarFallo(m) {
+  const el = document.getElementById('main');
+  if (!el || document.getElementById('falloApp')) return;
+  el.insertAdjacentHTML('afterbegin', '<div id="falloApp" class="vacio" style="border:2px solid #D0353F;color:#B82D37;margin-bottom:12px">' +
+    '<b>Error en la app:</b> ' + String(m).replace(/[<&]/g, c => (c === '<' ? '&lt;' : '&amp;')) +
+    '<br>Haz una captura de este mensaje para poder corregirlo.</div>');
+}
+window.addEventListener('error', e => mostrarFallo((e.message || 'Error') + (e.lineno ? ' (línea ' + e.lineno + ')' : '')));
+window.addEventListener('unhandledrejection', e => mostrarFallo(String((e.reason && (e.reason.stack || e.reason.message)) || e.reason)));
+</script>
+<script>
 const TIPOS = ['Fabricación', 'Instalación', 'Reparación'];
 const CLASE = { 'Fabricación': 'fab', 'Instalación': 'ins', 'Reparación': 'rep' };
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -669,8 +681,9 @@ function calcularFin(inicio, dur) {
 }
 const fLargo = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const fCorto = new Intl.DateTimeFormat('es-ES', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
-const largo = iso => { const s = fLargo.format(utc(iso)); return s.charAt(0).toUpperCase() + s.slice(1); };
-const corto = iso => fCorto.format(utc(iso));
+const esFecha = iso => /^\d{4}-\d{2}-\d{2}$/.test(String(iso || ''));
+const largo = iso => { if (!esFecha(iso)) return '(sin fecha)'; const s = fLargo.format(utc(iso)); return s.charAt(0).toUpperCase() + s.slice(1); };
+const corto = iso => (esFecha(iso) ? fCorto.format(utc(iso)) : '(sin fecha)');
 const plural = (n, a, b) => n + ' ' + (n === 1 ? a : b);
 
 /* ---------- Servidor ---------- */
@@ -867,7 +880,7 @@ try { ESC = localStorage.getItem('plan-escala') || 'semanas'; } catch (e) {}
 if (!ESCALAS[ESC]) ESC = 'semanas';
 const entre = (x, y) => Math.round((utc(y) - utc(x)) / 864e5);
 const fDM = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short', timeZone: 'UTC' });
-const dm = iso => fDM.format(utc(iso));
+const dm = iso => (esFecha(iso) ? fDM.format(utc(iso)) : '(sin fecha)');
 const finDeMes = iso => aIso(new Date(Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7), 0)));
 
 function rangoTL() {
@@ -2093,8 +2106,15 @@ function toast(txt, accion) {
 
 /* ---------- Arranque ---------- */
 render();
-llamar('obtenerDatos').then(aplicar).catch(ex => {
-  $('#main').innerHTML = `<div class="vacio">No se pudo cargar la planificación: ${esc((ex && ex.message) || ex)}. Recarga la página; si sigue fallando, abre la hoja y ejecuta Planificación › Preparar hojas.</div>`;
+setTimeout(() => {
+  if (!E.cargado) mostrarFallo('La app lleva 30 segundos esperando los datos del servidor. Comprueba tu conexión y recarga la página.');
+}, 30000);
+llamar('obtenerDatos').then(d => {
+  if (!d) throw new Error('El servidor no ha devuelto datos.');
+  aplicar(d);
+}).catch(ex => {
+  $('#main').innerHTML = '';
+  mostrarFallo('No se pudo cargar la planificación. ' + ((ex && (ex.stack || ex.message)) || ex));
 });
 </script>
 </body>
