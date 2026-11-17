@@ -246,6 +246,77 @@ fieldset.bloque legend{color:var(--c);font-weight:700;padding:0 6px}
 .sem-cab .tarde{color:var(--error)}
 @media (max-width:520px){.vistas button{padding:4px 7px;font-size:13px}}
 
+/* ===== Compras ===== */
+.fila-mat{display:grid;grid-template-columns:1fr 84px auto 36px;gap:6px;align-items:center;padding-bottom:8px;border-bottom:1px dashed var(--linea)}
+.fm-ud{font-size:13px;font-weight:600;color:var(--suave);min-width:22px}
+.fm-quitar{border:0;background:none;font-size:22px;color:var(--error);padding:4px}
+.fm-info{grid-column:1 / -1;font-size:12.5px;color:var(--suave);line-height:1.35}
+.fm-info.mal{color:var(--error);font-weight:600}
+#copiarMat{width:auto;max-width:240px;padding:8px 10px;font-size:14px}
+.nota-campo.bien{background:rgba(47,138,58,.1);color:#2A7A33;border-radius:8px;padding:10px 12px;margin-top:0}
+.nota-campo.atento{background:var(--aviso-fondo);color:var(--aviso);border-radius:8px;padding:10px 12px;margin-top:0}
+.nota-campo ul{margin:6px 0 0;padding-left:18px}
+@media (prefers-color-scheme: dark){.nota-campo.bien{color:#7BD487}}
+.sub-tabs{display:flex;gap:4px;border-bottom:2px solid var(--linea);margin:0 2px 14px;overflow-x:auto}
+.sub-tabs button{border:0;background:none;padding:10px 14px;font-weight:700;font-size:15px;color:var(--suave);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.sub-tabs button[aria-selected="true"]{color:var(--cian-texto);border-bottom-color:var(--pc-cian)}
+.sub-tabs .cuenta{display:inline-block;min-width:22px;padding:1px 7px;border-radius:999px;background:var(--fondo);font-size:12px;margin-left:4px;color:var(--tinta)}
+.prov-card{background:var(--superficie);border:1px solid var(--linea);border-left:6px solid var(--u);border-radius:10px;margin-bottom:12px;--u:var(--suave)}
+.prov-card.urg-fuera{--u:#D0353F}.prov-card.urg-hoy{--u:#D0353F}.prov-card.urg-semana{--u:var(--fab)}.prov-card.urg-luego{--u:var(--pc-cian)}
+.prov-card header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:12px 14px 8px;flex-wrap:wrap}
+.prov-card h3{margin:0;font-size:18px;color:var(--fuerte)}
+.prov-card header small{color:var(--suave);font-weight:600}
+.prov-card .urg{font-weight:700;font-size:13px;color:#fff;background:var(--u);border-radius:999px;padding:4px 10px}
+.linea-pedir{display:grid;grid-template-columns:24px 1fr auto;gap:2px 10px;padding:10px 14px;border-top:1px solid var(--linea);cursor:pointer;align-items:baseline}
+.linea-pedir input{grid-row:1 / 4;margin-top:4px;width:18px;height:18px;accent-color:var(--pc-cian)}
+.lp-mat b{color:var(--fuerte)}.lp-mat small{color:var(--suave);margin-left:6px}
+.lp-cant{font-weight:800;color:var(--fuerte);white-space:nowrap}
+.lp-para,.lp-lim{grid-column:2 / -1;font-size:13.5px;color:var(--suave)}
+.linea-pedir.fuera .lp-lim{color:var(--error);font-weight:700}
+.prov-acc{display:flex;align-items:center;gap:12px;padding:10px 14px 14px;flex-wrap:wrap;border-top:1px solid var(--linea)}
+.prov-acc small{color:var(--suave)}
+.camino{display:grid;gap:8px}
+.pedido-fila{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;background:var(--superficie);border:1px solid var(--linea);border-left:6px solid var(--pc-cian);border-radius:8px;padding:10px 12px}
+.pedido-fila.tarde{border-left-color:#D0353F}
+.pf-mat b{display:block;color:var(--fuerte)}.pf-mat small{color:var(--suave)}
+.pf-lleg{display:flex;flex-direction:column;font-size:12px;font-weight:700;color:var(--suave)}
+.pedido-fila.tarde .pf-lleg span{color:var(--error)}
+.pf-lleg input{padding:6px 8px;width:auto}
+.pf-acc{display:flex;gap:6px}
+.pf-acc .btn-terminar{margin-left:0}
+.pf-acc .secundario{padding:6px 10px;font-size:14px}
+@media (max-width:640px){.pedido-fila{grid-template-columns:1fr auto}.pf-acc{grid-column:1 / -1}}
+.stock-barra{display:flex;gap:12px;align-items:center;margin:0 2px 10px;flex-wrap:wrap}
+.buscar-stock{flex:1;min-width:200px;border:1px solid var(--linea);background:var(--superficie);border-radius:8px;padding:9px 12px}
+.stock-barra .terminadas{color:var(--suave)}
+.tabla-scroll{overflow-x:auto;background:var(--superficie);border:1px solid var(--linea);border-radius:10px}
+.tabla-stock{border-collapse:collapse;width:100%;font-size:14px}
+.tabla-stock th{position:sticky;top:0;background:var(--fondo);text-align:left;padding:8px 10px;font-size:13px;color:var(--suave);white-space:nowrap}
+.tabla-stock td{padding:7px 10px;border-top:1px solid var(--linea);vertical-align:top}
+.tabla-stock td small{display:block;color:var(--suave);font-size:12px}
+.tabla-stock .n{text-align:right;white-space:nowrap}
+.tabla-stock tr.falta td{background:rgba(208,53,63,.07)}
+.tabla-stock tr.falta td:first-child{box-shadow:inset 4px 0 0 #D0353F}
+.vacio-td{text-align:center;color:var(--suave);padding:18px}
+.c-pedir{--c:var(--fab);--ct:rgba(232,137,28,.22)}
+.c-tarde{--c:#D0353F;--ct:rgba(208,53,63,.18)}
+.c-camino{--c:var(--pc-cian);--ct:rgba(3,161,190,.2)}
+.c-prov{--c:var(--suave)}
+.leyenda-c{display:flex;gap:16px;flex-wrap:wrap;margin:0 2px 10px;font-size:13px;color:var(--suave);font-weight:600}
+.leyenda-c span{display:inline-flex;align-items:center;gap:6px}
+.leyenda-c i{width:22px;height:12px;border-radius:3px;background:var(--ct);border-left:4px solid var(--c)}
+
+/* Cabecera estrecha con cuatro vistas: los botones de vista pasan a su propia fila */
+@media (max-width:760px){
+  .cab-top{grid-template-columns:1fr auto auto}
+  .der{display:contents}
+  .refrescar{grid-column:3;grid-row:1}
+  .hoy{grid-column:2;grid-row:1}
+  .vistas{grid-column:1 / -1;grid-row:2}
+  .vistas button{flex:1}
+  .centro{grid-row:3}
+}
+
 /* Estado, avisos y dependencias */
 .e-pen{--c:var(--suave);--cf:#6B7079}
 .e-cur{--c:var(--pc-cian);--cf:#02829A}
@@ -398,6 +469,7 @@ dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:44
         <button type="button" data-vista="mes" aria-pressed="true">Gantt</button>
         <button type="button" data-vista="semana" aria-pressed="false">Semana</button>
         <button type="button" data-vista="lista" aria-pressed="false">Lista</button>
+        <button type="button" data-vista="compras" aria-pressed="false">Compras</button>
       </div>
     </div>
   </div>
@@ -500,6 +572,16 @@ dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:44
     <label><span>Equipo asignado</span><input type="text" id="fEquipo" list="dlEquipos" autocomplete="off"></label>
     <div id="avisoEquipo" class="aviso aviso-rojo" hidden></div>
 
+    <fieldset id="campoMat" class="bloque-fact" hidden>
+      <legend>Materiales</legend>
+      <div id="listaMat"></div>
+      <div class="fact-pie">
+        <button type="button" class="secundario" id="btnAddMat">+ Añadir material</button>
+        <select id="copiarMat" aria-label="Copiar materiales de otro proyecto"></select>
+      </div>
+      <div id="estadoMat" class="nota-campo" hidden></div>
+    </fieldset>
+
     <fieldset id="campoFact" class="bloque-fact" hidden>
       <legend>Facturas</legend>
       <div id="listaFact"></div>
@@ -528,6 +610,7 @@ dialog.lateral{position:fixed;inset:0 0 0 auto;margin:0;width:440px;max-width:44
 
 <datalist id="dlProyectos"></datalist>
 <datalist id="dlEquipos"></datalist>
+<datalist id="dlMateriales"></datalist>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <dialog id="dlgConf" class="conf" aria-labelledby="confTit">
@@ -556,10 +639,13 @@ const E = {
   tareas: [], festivos: new Map(), equipos: [],
   anio: +HOY.slice(0, 4), mes: +HOY.slice(5, 7) - 1,
   vista: (() => {
-    try { const v = localStorage.getItem('plan-vista'); if (['mes', 'semana', 'lista'].includes(v)) return v; } catch (e) {}
+    try { const v = localStorage.getItem('plan-vista'); if (['mes', 'semana', 'lista', 'compras'].includes(v)) return v; } catch (e) {}
     return matchMedia('(max-width: 640px)').matches ? 'semana' : 'mes';
   })(),
   filtroEquipo: '',
+  compras: { materiales: [], ubicaciones: [], bom: [], pedidos: [] }, matMap: new Map(),
+  plan: { porFab: new Map(), aPedir: [] },
+  subCompras: (() => { try { return localStorage.getItem('plan-sub-compras') || 'pedir'; } catch (e) { return 'pedir'; } })(),
   filtro: new Set(TIPOS), dia: HOY,
   busqueda: '', verTerminadas: false, editId: null, cargado: false
 };
@@ -598,6 +684,9 @@ function aplicar(d) {
   E.equipos = d.equipos || [];
   E.historial = d.historial || [];
   E.facturas = d.facturas || [];
+  E.compras = d.compras || { materiales: [], ubicaciones: [], bom: [], pedidos: [] };
+  E.matMap = new Map((E.compras.materiales || []).map(m => [m.producto, m]));
+  $('#dlMateriales').innerHTML = (E.compras.materiales || []).map(m => `<option value="${esc(m.producto)}">${esc(m.proveedor || '')}</option>`).join('');
   E.usuario = d.usuario || '';
   E.cargado = true;
   $('#dlEquipos').innerHTML = E.equipos.map(x => `<option value="${esc(x)}">`).join('');
@@ -636,7 +725,8 @@ function calcularAvisos() {
   E.avisos = new Map();
   E.tareas.forEach(t => {
     const c = choquesDe(t), f = antesDeFab(t), r = retrasada(t);
-    if (c.length || f || r) E.avisos.set(t.id, { choques: c, fab: f, retraso: r });
+    const pm = E.plan.porFab.get(t.id), mat = pm && pm.estado === 'tarde' ? pm : null;
+    if (c.length || f || r || mat) E.avisos.set(t.id, { choques: c, fab: f, retraso: r, mat });
   });
 }
 function lineasAviso(a, t) {
@@ -644,6 +734,7 @@ function lineasAviso(a, t) {
   if (a.retraso && t) l.push(`Retrasada: debía acabar el ${dm(t.fin)} y no está marcada como terminada`);
   else if (a.retraso) l.push('Retrasada: ya pasó su fecha de fin y no está marcada como terminada');
   l.push(...a.choques.map(o => `${o.equipo} también está en ${o.proyecto} (${dm(o.inicio)} – ${dm(o.fin)})`));
+  if (a.mat) l.push(`Material: ${textoMat(a.mat)}`);
   if (a.fab) l.push(`Empieza antes de que termine su fabricación (${a.fab.proyecto}, acaba el ${dm(a.fab.fin)})`);
   return l;
 }
@@ -748,10 +839,13 @@ function regletaHTML() {
 }
 
 function render() {
+  E.plan = planCompras();
   calcularAvisos();
   pintarTitulo();
   $('#navMes').hidden = E.vista !== 'mes';
   $('#mesHoy').hidden = E.vista !== 'mes';
+  $('#regleta').hidden = E.vista === 'compras';
+  document.querySelector('.fabs').hidden = E.vista === 'compras';
   $('#navLista').hidden = E.vista !== 'lista';
   document.querySelectorAll('[data-vista]').forEach(b => b.setAttribute('aria-pressed', b.dataset.vista === E.vista));
   $('#regleta').innerHTML = regletaHTML();
@@ -759,7 +853,9 @@ function render() {
   const tlPrevio = $('#tl');
   if (tlPrevio) E.tlY = tlPrevio.scrollTop;
   $('#main').innerHTML = E.vista === 'mes' ? htmlGantt()
+    : E.vista === 'compras' ? htmlCompras()
     : `<div class="sem-barra">${selEquipoHTML()}</div>` + (E.vista === 'semana' ? htmlSemana() : htmlLista());
+  if (E.vista === 'compras') initCrono();
   if (E.vista === 'mes') { initTL(); if (dlg.open) marcarSel(E.editId); }
 }
 
@@ -863,7 +959,7 @@ function htmlGantt() {
     out.forEach(o => {
       const av = E.avisos.get(o.t.id), fab = fabDe(o.t);
       const fs = facturasDe(o.t.id);
-      const tip = [o.p, o.s, o.t.ubicacion, fab ? 'Va después de: ' + fab.proyecto : '', fs.length ? `Facturas: ${fs.map(f => dm(f.fecha) + ' ' + eur(f.importe)).join(', ')}` : '', ...(av ? lineasAviso(av, o.t).map(x => '⚠ ' + x) : [])].filter(Boolean).join('\n');
+      const tip = [o.p, o.s, o.t.ubicacion, fab ? 'Va después de: ' + fab.proyecto : '', fs.length ? `Facturas: ${fs.map(f => dm(f.fecha) + ' ' + eur(f.importe)).join(', ')}` : '', E.plan.porFab.has(o.t.id) && E.plan.porFab.get(o.t.id).estado !== 'tarde' ? 'Materiales: ' + textoMat(E.plan.porFab.get(o.t.id)) : '', ...(av ? lineasAviso(av, o.t).map(x => '⚠ ' + x) : [])].filter(Boolean).join('\n');
       const cls = 'tl-tarea' + (av ? ' choque' : '') + (o.t.estado === 'Terminada' ? ' terminada' : '') + (o.t.estado === 'En curso' ? ' encurso' : '');
       h += `<div class="${cls}" data-id="${esc(o.t.id)}" tabindex="0" role="button" title="${esc(tip)}"
         aria-label="Editar ${esc(tp)}: ${esc(o.p)}, ${esc(o.s)}" style="left:${o.x}px;top:${8 + o.f * 48}px">
@@ -1146,6 +1242,7 @@ function tarjeta(t) {
     ${t.ubicacion ? `<span class="dato"><b>Ubicación:</b> <a href="${maps}" target="_blank" rel="noopener">${esc(t.ubicacion)}</a></span>` : ''}
     ${t.equipo ? `<span class="dato"><b>Equipo:</b> ${esc(t.equipo)}</span>` : ''}
     ${(() => { const fs = facturasDe(t.id); return fs.length ? `<span class="dato"><b>Facturas:</b> ${fs.map(f => `${dm(f.fecha)} ${eur(f.importe)}`).join(', ')}</span>` : ''; })()}
+    ${E.plan.porFab.has(t.id) && E.plan.porFab.get(t.id).estado !== 'tarde' ? `<span class="dato"><b>Materiales:</b> ${esc(textoMat(E.plan.porFab.get(t.id)))}</span>` : ''}
     ${fab ? `<span class="dato">${ICO.enlace}<b>Después de:</b> ${esc(fab.proyecto)} (acaba el ${dm(fab.fin)})</span>` : ''}
     ${av ? lineasAviso(av, t).map(x => `<span class="aviso-t">${ICO.aviso}${esc(x)}</span>`).join('') : ''}
     ${t.observaciones ? `<span class="obs">${esc(t.observaciones)}</span>` : ''}
@@ -1172,6 +1269,7 @@ function datosForm() {
     observaciones: $('#fObs').value.trim(),
     estado: estadoElegido(),
     facturas: tipo === 'Fabricación' ? [] : leerFilasFact(),
+    materiales: tipo === 'Fabricación' ? leerFilasMat() : [],
     dependeDe: tipo === 'Instalación' ? $('#fDepende').value : ''
   };
 }
@@ -1188,6 +1286,8 @@ function actualizarAvisosForm() {
   const d = datosForm();
   $('#campoDep').hidden = d.tipo !== 'Instalación';
   $('#campoFact').hidden = !d.tipo || d.tipo === 'Fabricación';
+  $('#campoMat').hidden = d.tipo !== 'Fabricación';
+  estadoMatForm();
   if (d.tipo === 'Instalación' && depAuto && !$('#fDepende').value && d.proyecto) {
     const f = E.tareas.find(x => x.tipo === 'Fabricación' && normEq(x.proyecto) === normEq(d.proyecto));
     if (f) { $('#fDepende').value = f.id; d.dependeDe = f.id; }
@@ -1248,6 +1348,8 @@ function abrirForm(t, inicio) {
   $('#btnGuardar').textContent = 'Guardar tarea';
   pintarHistorial(t ? t.id : null);
   pintarFilasFact(t ? facturasDe(t.id) : []);
+  pintarFilasMat(t ? bomDe(t.id) : []);
+  rellenarCopiarMat(t ? t.id : null);
   setTimeout(actualizarAvisosForm, 0);
   $('#btnEliminar').hidden = !t;
   $('#btnEliminar').textContent = 'Eliminar tarea';
@@ -1320,7 +1422,22 @@ $('#btnAddFact').addEventListener('click', () => {
   filas[filas.length - 1].focus();
 });
 
+$('#btnAddMat').addEventListener('click', () => {
+  pintarFilasMat([...leerFilasMat(), { producto: '', cantidad: '' }]);
+  const f = document.querySelectorAll('#listaMat .fm-prod');
+  f[f.length - 1].focus();
+});
+$('#copiarMat').addEventListener('change', e => {
+  const id = e.target.value; if (!id) return;
+  const actuales = leerFilasMat().filter(l => l.producto);
+  pintarFilasMat([...actuales, ...bomDe(id).map(b => ({ producto: b.producto, cantidad: b.cantidad }))]);
+  e.target.value = '';
+  alCambiarForm();
+  toast('Materiales copiados. Revisa las cantidades.');
+});
+
 function alCambiarForm() {
+  infoFilasMat();
   totalFact();
   actualizarFin();
   actualizarAvisosForm();
@@ -1332,6 +1449,8 @@ form.addEventListener('change', alCambiarForm);
 form.addEventListener('click', e => {
   const b = e.target.closest('[data-mover]');
   if (b) { $('#fInicio').value = b.dataset.mover; alCambiarForm(); }
+  const qm = e.target.closest('.fm-quitar');
+  if (qm) { qm.closest('.fila-mat').remove(); pintarFilasMat(leerFilasMat()); alCambiarForm(); }
   const q = e.target.closest('.ff-quitar');
   if (q) { q.closest('.fila-fact').remove(); pintarFilasFact(leerFilasFact()); alCambiarForm(); }
 });
@@ -1345,6 +1464,7 @@ form.addEventListener('submit', async e => {
   else if (!datos.proyecto) msg = 'Escribe el nombre del proyecto.';
   else if (!datos.inicio) msg = 'Elige la fecha de inicio.';
   else if (!(datos.duracion >= 1 && datos.duracion <= 500)) msg = 'La duración debe estar entre 1 y 500 días laborables.';
+  if (!msg && datos.materiales.some(l => l.producto && !(l.cantidad > 0))) msg = 'Falta la cantidad de algún material (o quítalo con la ×).';
   if (!msg && datos.facturas.some(f => f.importe > 0 && !f.fecha)) msg = 'Falta la fecha de alguna factura.';
   if (!msg && datos.facturas.some(f => f.fecha && !(f.importe > 0))) msg = 'Falta el importe de alguna factura (o quítala con la ×).';
   if (msg) { err.textContent = msg; err.hidden = false; return; }
@@ -1538,6 +1658,422 @@ formP.addEventListener('submit', async e => {
   } finally {
     btn.disabled = false; if (dlgP.open) btn.textContent = crearIgual ? 'Crear igualmente' : 'Crear proyecto';
   }
+});
+
+/* =====================================================================
+   COMPRAS: stock, materiales por proyecto y planificación de pedidos
+   ===================================================================== */
+const normProd = s => String(s || '').trim().replace(/\s+/g, ' ');
+const fNum = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 2, useGrouping: 'always' });
+const num = n => fNum.format(n);
+const udCorta = u => ({ 'Unidades': 'ud.', 'unidades': 'ud.' }[u] || u || '');
+const bomDe = id => (E.compras.bom || []).filter(b => b.tarea === id);
+const stockTotal = m => Object.values((m && m.stock) || {}).reduce((s, x) => s + x, 0);
+const nombreCorto = p => String(p).replace(/^\[[^\]]+\]\s*/, '');
+const ORDEN_EST = { sin: 0, ok: 1, pedido: 2, pedir: 3, tarde: 4 };
+
+/*
+ * Reparte el stock y los pedidos en camino entre las fabricaciones pendientes,
+ * por orden de fecha. Lo que falta hay que pedirlo: la fecha límite de pedido es
+ * la fecha de fabricación menos el plazo de entrega del proveedor (días naturales).
+ * «over» permite simular una tarea con datos del formulario sin guardar.
+ */
+function planCompras(over) {
+  const plan = { porFab: new Map(), aPedir: [] };
+  const C = E.compras;
+  const pool = new Map();
+  (C.materiales || []).forEach(m => pool.set(m.producto, [{ fecha: '', qty: stockTotal(m), tipo: 'stock' }]));
+  (C.pedidos || []).filter(p => p.estado === 'Pendiente').forEach(p => {
+    if (!pool.has(p.producto)) pool.set(p.producto, []);
+    pool.get(p.producto).push({ fecha: p.llegada, qty: p.cantidad, tipo: 'pedido', pedido: p });
+  });
+  pool.forEach(l => l.sort((a, b) => a.fecha.localeCompare(b.fecha)));
+
+  let tareas = E.tareas.slice();
+  if (over) {
+    const i = tareas.findIndex(t => t.id === over.id);
+    if (i >= 0) tareas[i] = over; else tareas.push(over);
+  }
+  const fabs = tareas.filter(t => t.tipo === 'Fabricación' && t.estado === 'Pendiente')
+    .sort((a, b) => a.inicio.localeCompare(b.inicio) || a.proyecto.localeCompare(b.proyecto, 'es'));
+
+  fabs.forEach(f => {
+    const lineas = over && f.id === over.id ? over.bom : bomDe(f.id);
+    if (!lineas.length) return;
+    const D = f.inicio < HOY ? HOY : f.inicio;
+    const res = { fab: f, D, lineas: [], estado: 'ok' };
+    lineas.forEach(l => {
+      const k = normProd(l.producto), m = E.matMap.get(k);
+      const r = { producto: k, mat: m, cantidad: l.cantidad, deStock: 0, aTiempo: [], tarde: [], aPedir: 0, fab: f, D };
+      let falta = l.cantidad;
+      for (const it of (pool.get(k) || [])) {
+        if (falta <= 1e-9) break;
+        if (it.qty <= 1e-9) continue;
+        const u = Math.min(it.qty, falta);
+        it.qty -= u; falta -= u;
+        if (it.tipo === 'stock') r.deStock += u;
+        else (it.fecha <= D ? r.aTiempo : r.tarde).push({ qty: u, llegada: it.fecha });
+      }
+      r.aPedir = Math.round(falta * 1000) / 1000;
+      if (r.aPedir > 0) {
+        const plazo = m ? m.plazo : 0;
+        r.limite = sumar(D, -plazo);
+        r.fueraPlazo = r.limite < HOY;
+        r.llegada = r.fueraPlazo ? sumar(HOY, plazo) : D;
+        plan.aPedir.push(r);
+      }
+      r.estado = r.fueraPlazo || r.tarde.length ? 'tarde' : r.aPedir > 0 ? 'pedir' : r.aTiempo.length ? 'pedido' : 'ok';
+      if (ORDEN_EST[r.estado] > ORDEN_EST[res.estado]) res.estado = r.estado;
+      res.lineas.push(r);
+    });
+    plan.porFab.set(f.id, res);
+  });
+  return plan;
+}
+
+// Texto corto del estado de materiales de una fabricación
+function textoMat(pm) {
+  if (!pm) return '';
+  const pedir = pm.lineas.filter(l => l.aPedir > 0);
+  const tarde = pm.lineas.filter(l => l.estado === 'tarde');
+  if (pm.estado === 'ok') return 'Todo el material está en stock';
+  if (pm.estado === 'pedido') return 'Cubierto con pedidos que llegan a tiempo';
+  if (pm.estado === 'pedir') {
+    const lim = pedir.reduce((m, l) => (l.limite < m ? l.limite : m), pedir[0].limite);
+    return `${pedir.length === 1 ? 'Falta 1 material' : `Faltan ${pedir.length} materiales`}: hay que pedir antes del ${dm(lim)}`;
+  }
+  const peor = tarde.reduce((m, l) => {
+    const ll = l.fueraPlazo ? l.llegada : l.tarde.reduce((x, t) => (t.llegada > x ? t.llegada : x), '');
+    return ll > m ? ll : m;
+  }, '');
+  return `${plural(tarde.length, 'material no llega', 'materiales no llegan')} a tiempo (llegaría el ${dm(peor)})`;
+}
+
+/* ---------- Materiales en el formulario de fabricación ---------- */
+function filaMatHTML(l) {
+  return `<div class="fila-mat">
+    <input type="text" class="fm-prod" list="dlMateriales" placeholder="Busca por código o nombre" value="${esc(l.producto || '')}" aria-label="Material">
+    <input type="number" class="fm-cant" min="0" step="any" inputmode="decimal" placeholder="Cant." value="${l.cantidad || ''}" aria-label="Cantidad">
+    <span class="fm-ud"></span>
+    <button type="button" class="fm-quitar" aria-label="Quitar material" title="Quitar material">×</button>
+    <small class="fm-info"></small>
+  </div>`;
+}
+function pintarFilasMat(lista) {
+  $('#listaMat').innerHTML = lista.length ? lista.map(filaMatHTML).join('') : '<p class="fact-vacio">Sin materiales.</p>';
+  infoFilasMat();
+}
+function leerFilasMat() {
+  return [...document.querySelectorAll('#listaMat .fila-mat')].map(r => ({
+    producto: normProd(r.querySelector('.fm-prod').value),
+    cantidad: parseFloat(String(r.querySelector('.fm-cant').value).replace(',', '.')) || 0
+  }));
+}
+function infoFilasMat() {
+  document.querySelectorAll('#listaMat .fila-mat').forEach(r => {
+    const p = normProd(r.querySelector('.fm-prod').value), m = E.matMap.get(p);
+    r.querySelector('.fm-ud').textContent = m ? udCorta(m.unidad) : '';
+    const info = r.querySelector('.fm-info');
+    info.classList.toggle('mal', !!p && !m);
+    if (!p) { info.textContent = ''; return; }
+    if (!m) { info.textContent = 'No está en el catálogo: añádelo en la pestaña «Catálogo» de la hoja para saber su proveedor y plazo.'; return; }
+    const ubs = Object.entries(m.stock).map(([u, q]) => `${u} ${num(q)}`).join(', ');
+    info.textContent = `Stock: ${num(stockTotal(m))} ${udCorta(m.unidad)}${ubs ? ` (${ubs})` : ''}. ${m.proveedor || 'Sin proveedor'}, ${plural(m.plazo, 'día', 'días')} de entrega.`;
+  });
+}
+function rellenarCopiarMat(idActual) {
+  const ids = [...new Set((E.compras.bom || []).map(b => b.tarea))].filter(id => id !== idActual);
+  const fabs = ids.map(id => E.tareas.find(t => t.id === id)).filter(Boolean).sort((a, b) => b.inicio.localeCompare(a.inicio));
+  $('#copiarMat').innerHTML = '<option value="">Copiar materiales de…</option>' +
+    fabs.map(f => `<option value="${esc(f.id)}">${esc(f.proyecto)} (${dm(f.inicio)})</option>`).join('');
+  $('#copiarMat').hidden = !fabs.length;
+}
+// Estado de materiales con los datos del formulario, antes de guardar
+function estadoMatForm() {
+  const box = $('#estadoMat');
+  const d = datosForm();
+  if (d.tipo !== 'Fabricación') { box.hidden = true; return; }
+  const lineas = d.materiales.filter(l => l.producto && l.cantidad > 0);
+  box.hidden = !lineas.length;
+  if (!lineas.length) return;
+  box.className = 'nota-campo';
+  if (d.estado !== 'Pendiente') { box.textContent = 'La disponibilidad de material solo se calcula para fabricaciones pendientes.'; return; }
+  if (!d.inicio) { box.textContent = ''; return; }
+  const over = Object.assign({}, d, { id: d.id || '__nueva__', bom: lineas });
+  const pm = planCompras(over).porFab.get(over.id);
+  if (!pm) { box.textContent = ''; return; }
+  const cls = { ok: 'bien', pedido: 'bien', pedir: 'atento', tarde: 'mal' }[pm.estado];
+  box.className = 'nota-campo ' + cls;
+  const det = pm.lineas.filter(l => l.aPedir > 0 || l.tarde.length).map(l => {
+    const m = l.mat || {};
+    if (l.tarde.length && !l.aPedir) return `<li>${esc(nombreCorto(l.producto))}: el pedido en camino llega el ${dm(l.tarde[0].llegada)}, tarde.</li>`;
+    return `<li>${esc(nombreCorto(l.producto))}: faltan ${num(l.aPedir)} ${udCorta(m.unidad)}. ${l.fueraPlazo
+      ? `Pidiéndolo hoy a ${esc(m.proveedor || 'su proveedor')} llegaría el ${dm(l.llegada)}.`
+      : `Pedir a ${esc(m.proveedor || 'su proveedor')} antes del ${dm(l.limite)}.`}</li>`;
+  }).join('');
+  box.innerHTML = `${pm.estado === 'tarde' ? ICO.aviso : ''}<b>${textoMat(pm)}.</b>${det ? `<ul>${det}</ul>` : ''}`;
+}
+
+/* ---------- Vista Compras ---------- */
+function gruposPedir() {
+  const g = new Map();
+  E.plan.aPedir.forEach(r => {
+    const prov = (r.mat && r.mat.proveedor) || 'Sin proveedor';
+    if (!g.has(prov)) g.set(prov, { proveedor: prov, plazo: r.mat ? r.mat.plazo : 0, limite: r.limite, fueraPlazo: false, prods: new Map() });
+    const G = g.get(prov);
+    if (r.limite < G.limite) G.limite = r.limite;
+    if (r.fueraPlazo) G.fueraPlazo = true;
+    if (!G.prods.has(r.producto)) G.prods.set(r.producto, { producto: r.producto, mat: r.mat, cantidad: 0, para: [], limite: r.limite, fueraPlazo: false, llegada: r.llegada });
+    const P = G.prods.get(r.producto);
+    P.cantidad = Math.round((P.cantidad + r.aPedir) * 1000) / 1000;
+    P.para.push({ proyecto: r.fab.proyecto, D: r.D, qty: r.aPedir });
+    if (r.limite < P.limite) P.limite = r.limite;
+    if (r.fueraPlazo) { P.fueraPlazo = true; if (r.llegada > P.llegada) P.llegada = r.llegada; }
+  });
+  return [...g.values()].sort((a, b) => a.limite.localeCompare(b.limite));
+}
+function urgencia(lim) {
+  if (lim < HOY) return ['fuera', 'Fuera de plazo'];
+  if (lim === HOY) return ['hoy', 'Pedir hoy'];
+  if (lim <= sumar(HOY, 7)) return ['semana', `Pedir esta semana, antes del ${dm(lim)}`];
+  return ['luego', `Pedir antes del ${dm(lim)}`];
+}
+
+let LINEAS_PEDIR = [];
+function htmlCompras() {
+  const C = E.compras;
+  if (C.error) return `<div class="vacio">No se pudo leer el inventario: ${esc(C.error)}</div>`;
+  if (!C.materiales.length) {
+    return `<div class="vacio"><b>Aún no hay inventario.</b> Abre la hoja de cálculo, ve a la pestaña «Inventario» e importa ahí el Excel de stock
+      (Archivo › Importar › Subir › «Reemplazar hoja actual»). Después pulsa el botón de actualizar de la app.</div>`;
+  }
+  const grupos = gruposPedir();
+  const camino = (C.pedidos || []).filter(p => p.estado === 'Pendiente');
+  const sinMat = E.tareas.filter(t => t.tipo === 'Fabricación' && t.estado === 'Pendiente' && t.fin >= HOY && !bomDe(t.id).length);
+  const tabs = [
+    ['pedir', 'Por pedir', grupos.reduce((s, g) => s + g.prods.size, 0)],
+    ['calendario', 'Calendario', null],
+    ['camino', 'En camino', camino.length],
+    ['stock', 'Stock', null]
+  ];
+  const sub = E.subCompras || 'pedir';
+  let h = `<div class="sub-tabs" role="tablist">${tabs.map(([k, n, c]) =>
+    `<button type="button" role="tab" data-sub="${k}" aria-selected="${k === sub}">${n}${c ? ` <span class="cuenta">${c}</span>` : ''}</button>`).join('')}</div>`;
+  if (sinMat.length && sub !== 'stock') {
+    h += `<p class="nota">${ICO.aviso}${plural(sinMat.length, 'fabricación pendiente no tiene', 'fabricaciones pendientes no tienen')} materiales asignados y no se tienen en cuenta:
+      ${sinMat.slice(0, 6).map(t => `<button type="button" class="enlace" data-abrir="${esc(t.id)}">${esc(t.proyecto)}</button>`).join(', ')}${sinMat.length > 6 ? '…' : ''}.</p>`;
+  }
+  if (sub === 'pedir') h += htmlPorPedir(grupos);
+  else if (sub === 'calendario') h += htmlCalCompras(grupos, camino);
+  else if (sub === 'camino') h += htmlEnCamino(camino);
+  else h += htmlStock();
+  return h;
+}
+
+function htmlPorPedir(grupos) {
+  LINEAS_PEDIR = [];
+  if (!grupos.length) return `<div class="vacio">${ICO.check} No hace falta pedir nada: el stock y los pedidos en camino cubren todas las fabricaciones pendientes que tienen materiales.</div>`;
+  return grupos.map(G => {
+    const [cls, txt] = urgencia(G.limite);
+    const filas = [...G.prods.values()].sort((a, b) => a.limite.localeCompare(b.limite)).map(P => {
+      const i = LINEAS_PEDIR.push({ producto: P.producto, cantidad: P.cantidad, proveedor: G.proveedor, plazo: G.plazo,
+        para: P.para.map(x => `${x.proyecto} (${num(x.qty)})`).join(', ') }) - 1;
+      const m = P.mat || {};
+      return `<label class="linea-pedir${P.fueraPlazo ? ' fuera' : ''}">
+        <input type="checkbox" data-linea="${i}" checked>
+        <span class="lp-mat"><b>${esc(nombreCorto(P.producto))}</b>${m.codigo ? ` <small>${esc(m.codigo)}</small>` : ''}</span>
+        <span class="lp-cant">${num(P.cantidad)} ${udCorta(m.unidad)}</span>
+        <span class="lp-para">Para ${P.para.map(x => `${esc(x.proyecto)} (fab. ${dm(x.D)})`).join(', ')}</span>
+        <span class="lp-lim">${P.fueraPlazo ? `${ICO.aviso}Pidiéndolo hoy llegaría el ${dm(P.llegada)}` : `Pedir antes del ${dm(P.limite)}`}</span>
+      </label>`;
+    }).join('');
+    return `<section class="prov-card urg-${cls}">
+      <header><div><h3>${esc(G.proveedor)}</h3><small>Plazo de entrega: ${plural(G.plazo, 'día', 'días')}</small></div><span class="urg">${txt}</span></header>
+      <div class="lineas">${filas}</div>
+      <div class="prov-acc"><button type="button" class="primario" data-pedir-prov="${esc(G.proveedor)}">Marcar como pedido</button>
+        <small>Se anota en la pestaña «Pedidos» con la llegada prevista según el plazo.</small></div>
+    </section>`;
+  }).join('');
+}
+
+function htmlEnCamino(camino) {
+  if (!camino.length) return '<div class="vacio">No hay pedidos en camino.</div>';
+  const l = camino.slice().sort((a, b) => a.llegada.localeCompare(b.llegada));
+  return `<p class="nota">Marca un pedido como «Recibido» cuando ya esté dado de alta en el inventario y hayas vuelto a importar el Excel de stock. Si el proveedor te da otra fecha, cámbiala aquí.</p>
+    <div class="camino">${l.map(p => `<div class="pedido-fila${p.llegada < HOY ? ' tarde' : ''}">
+      <div class="pf-mat"><b>${esc(nombreCorto(p.producto))}</b><small>${num(p.cantidad)} ${udCorta(p.unidad)} · ${esc(p.proveedor)} · pedido el ${dm(p.fecha)}${p.para ? ` · para ${esc(p.para)}` : ''}</small></div>
+      <label class="pf-lleg"><span>${p.llegada < HOY ? `${ICO.aviso}Debía llegar` : 'Llega'}</span><input type="date" value="${p.llegada}" data-llegada="${esc(p.id)}"></label>
+      <div class="pf-acc"><button type="button" class="btn-terminar" data-recibido="${esc(p.id)}">${ICO.check}Recibido</button>
+        <button type="button" class="secundario" data-anular="${esc(p.id)}">Anular</button></div>
+    </div>`).join('')}</div>`;
+}
+
+function filasStock() {
+  const C = E.compras, q = (E.stockQ || '').toLowerCase();
+  const nec = new Map();
+  E.tareas.filter(t => t.tipo === 'Fabricación' && t.estado === 'Pendiente').forEach(t =>
+    bomDe(t.id).forEach(b => nec.set(b.producto, (nec.get(b.producto) || 0) + b.cantidad)));
+  const cam = new Map();
+  (C.pedidos || []).filter(p => p.estado === 'Pendiente').forEach(p => cam.set(p.producto, (cam.get(p.producto) || 0) + p.cantidad));
+  return C.materiales.filter(m => !q || (m.producto + ' ' + m.proveedor).toLowerCase().includes(q))
+    .map(m => ({ m, total: stockTotal(m), nec: nec.get(m.producto) || 0, cam: cam.get(m.producto) || 0 }))
+    .filter(x => !E.soloFalta || x.nec > x.total + x.cam)
+    .sort((a, b) => a.m.producto.localeCompare(b.m.producto, 'es'))
+    .map(x => {
+      const falta = x.nec > x.total + x.cam;
+      return `<tr class="${falta ? 'falta' : ''}"><td><b>${esc(nombreCorto(x.m.producto))}</b><small>${esc(x.m.codigo || '')}</small></td>
+        ${C.ubicaciones.map(u => `<td class="n">${x.m.stock[u] ? num(x.m.stock[u]) : '–'}</td>`).join('')}
+        <td class="n"><b>${num(x.total)}</b></td><td class="n">${x.nec ? num(x.nec) : '–'}</td><td class="n">${x.cam ? num(x.cam) : '–'}</td>
+        <td>${esc(udCorta(x.m.unidad))}</td><td>${esc(x.m.proveedor)}</td><td class="n">${x.m.plazo} d</td></tr>`;
+    }).join('') || `<tr><td colspan="${7 + C.ubicaciones.length}" class="vacio-td">Ningún material coincide.</td></tr>`;
+}
+function htmlStock() {
+  const C = E.compras;
+  return `<div class="stock-barra"><input type="search" id="stockBuscar" class="buscar-stock" placeholder="Buscar material o proveedor" value="${esc(E.stockQ || '')}">
+    <label class="terminadas"><input type="checkbox" id="soloFalta"${E.soloFalta ? ' checked' : ''}> Solo con falta</label></div>
+    <div class="tabla-scroll"><table class="tabla-stock"><thead><tr><th>Material</th>${C.ubicaciones.map(u => `<th class="n">${esc(u)}</th>`).join('')}
+      <th class="n">Total</th><th class="n" title="Lo que necesitan las fabricaciones pendientes">Necesario</th><th class="n">En camino</th><th>Ud.</th><th>Proveedor</th><th class="n">Plazo</th></tr></thead>
+      <tbody id="stockBody">${filasStock()}</tbody></table></div>
+    <p class="nota">El proveedor y el plazo de cada material se cambian en la pestaña «Catálogo» de la hoja de cálculo.</p>`;
+}
+
+// Calendario de compras: un carril por proveedor
+function htmlCalCompras(grupos, camino) {
+  const filas = new Map();
+  const fila = prov => { if (!filas.has(prov)) filas.set(prov, { nombre: prov, items: [] }); return filas.get(prov); };
+  // Una barra por proveedor y fabricación: de la fecha límite de pedido a la fecha de fabricación
+  const porFab = new Map();
+  E.plan.aPedir.forEach(r => {
+    const prov = (r.mat && r.mat.proveedor) || 'Sin proveedor';
+    const k = prov + '|' + r.fab.id;
+    if (!porFab.has(k)) porFab.set(k, { prov, fab: r.fab, D: r.D, limite: r.limite, fuera: false, mats: [] });
+    const x = porFab.get(k);
+    if (r.limite < x.limite) x.limite = r.limite;
+    if (r.fueraPlazo) x.fuera = true;
+    x.mats.push(`${num(r.aPedir)} ${udCorta(r.mat ? r.mat.unidad : '')} ${nombreCorto(r.producto)}`);
+  });
+  porFab.forEach(x => fila(x.prov).items.push({
+    inicio: x.fuera ? HOY : x.limite, fin: x.D < HOY ? HOY : x.D, cls: x.fuera ? 'c-tarde' : 'c-pedir',
+    p: `${x.fuera ? 'Fuera de plazo, pedir ya' : 'Pedir antes del ' + dm(x.limite)}: ${x.fab.proyecto}`,
+    s: `${plural(x.mats.length, 'material', 'materiales')}, fabricación el ${dm(x.D)}`,
+    tip: [`${x.prov}: pedir antes del ${dm(x.limite)}`, `Para ${x.fab.proyecto} (fabricación el ${dm(x.D)})`, ...x.mats].join('\n')
+  }));
+  camino.forEach(p => fila(p.proveedor).items.push({
+    inicio: p.fecha, fin: p.llegada < p.fecha ? p.fecha : p.llegada, cls: 'c-camino',
+    p: `En camino: ${nombreCorto(p.producto)}`, s: `${num(p.cantidad)} ${udCorta(p.unidad)}, llega el ${dm(p.llegada)}`,
+    tip: `${p.proveedor}: ${num(p.cantidad)} ${udCorta(p.unidad)} ${p.producto}\nPedido el ${dm(p.fecha)}, llega el ${dm(p.llegada)}`
+  }));
+  if (!filas.size) return '<div class="vacio">No hay pedidos pendientes ni por hacer.</div>';
+  const lista = [...filas.values()].sort((a, b) => {
+    const ma = a.items.reduce((m, i) => (i.inicio < m ? i.inicio : m), '9999'), mb = b.items.reduce((m, i) => (i.inicio < m ? i.inicio : m), '9999');
+    return ma.localeCompare(mb);
+  });
+  return `<div class="leyenda-c"><span class="c-pedir"><i></i>Desde la fecha límite de pedido hasta la fabricación</span>
+    <span class="c-tarde"><i></i>Fuera de plazo</span><span class="c-camino"><i></i>Pedido en camino</span></div>` + htmlCrono('tlc', lista);
+}
+
+// Cronograma sencillo (sin arrastre) con el mismo aspecto que el Gantt
+function htmlCrono(id, filas) {
+  const dpx = 12;
+  let a = sumar(HOY, -14), b = sumar(HOY, 90);
+  filas.forEach(f => f.items.forEach(it => { if (it.inicio < a) a = it.inicio; if (it.fin > b) b = it.fin; }));
+  a = a.slice(0, 8) + '01'; b = finDeMes(sumar(finDeMes(b), 1));
+  const nd = entre(a, b) + 1, W = nd * dpx;
+  E.crono = { a, dpx };
+  let h = `<div class="tl esc-semanas" id="${id}" style="--dpx:${dpx}px"><div class="tl-lienzo" style="width:calc(var(--izq) + ${W}px)">
+    <div class="tl-cab"><div class="tl-esq"></div><div class="tl-escala" style="width:${W}px;cursor:default">`;
+  for (let m = a; m <= b; m = sumar(finDeMes(m), 1)) {
+    const fm = finDeMes(m) > b ? b : finDeMes(m);
+    h += `<div class="tl-mes" style="left:${entre(a, m) * dpx}px;width:${(entre(m, fm) + 1) * dpx}px"><span>${MESES[+m.slice(5, 7) - 1]} ${m.slice(0, 4)}</span></div>`;
+  }
+  for (let i = 0; i < nd; i++) {
+    const d = sumar(a, i);
+    if (utc(d).getUTCDay() === 1) h += `<div class="tl-dia lunes" style="left:${i * dpx}px;width:${dpx * 7}px"><b>${+d.slice(8)}</b></div>`;
+  }
+  if (HOY >= a && HOY <= b) h += `<span class="tl-hoyeti" style="left:${(entre(a, HOY) + .5) * dpx}px">Hoy</span>`;
+  h += `</div></div><div class="tl-cuerpo"><div class="tl-fondo" style="width:${W}px">`;
+  for (let i = 0; i < nd; i++) { const d = sumar(a, i); if (!laborable(d)) h += `<span class="tl-nolab" style="left:${i * dpx}px;width:${dpx}px"></span>`; }
+  for (let m = sumar(finDeMes(a), 1); m <= b; m = sumar(finDeMes(m), 1)) h += `<span class="tl-raya" style="left:${entre(a, m) * dpx}px"></span>`;
+  if (HOY >= a && HOY <= b) h += `<span class="tl-hoy" style="left:${(entre(a, HOY) + .5) * dpx - 1}px"></span>`;
+  h += '</div>';
+  filas.forEach(f => {
+    const items = f.items.slice().sort((x, y) => x.inicio.localeCompare(y.inicio));
+    const ocup = [];
+    const pos = items.map(it => {
+      const x = entre(a, it.inicio) * dpx, w = (entre(it.inicio, it.fin) + 1) * dpx;
+      const tw = Math.min(380, Math.max(it.p.length * 7.6, it.s.length * 6.3) + 24);
+      let r = ocup.findIndex(fin => fin + 8 <= x);
+      if (r < 0) { r = ocup.length; ocup.push(0); }
+      ocup[r] = x + Math.max(w, tw);
+      return { it, x, w, r };
+    });
+    h += `<div class="tl-carril"><div class="tl-nom c-prov"><div class="tl-nom-in"><b>${esc(f.nombre)}</b><small>${plural(items.length, 'entrada', 'entradas')}</small></div></div>
+      <div class="tl-zona" style="width:${W}px;height:${Math.max(1, ocup.length) * 48 + 8}px">`;
+    pos.forEach(o => {
+      h += `<div class="tl-tarea ${o.it.cls}" style="left:${o.x}px;top:${8 + o.r * 48}px;cursor:default" title="${esc(o.it.tip)}">
+        <span class="fondo" style="width:${o.w}px"></span>
+        <span class="txt"><span class="p">${esc(o.it.p)}</span><span class="s">${esc(o.it.s)}</span></span></div>`;
+    });
+    h += '</div></div>';
+  });
+  return h + '</div></div></div>';
+}
+function initCrono() {
+  const el = $('#tlc'); if (!el) return;
+  ajustarAlto(el);
+  const izq = el.querySelector('.tl-esq').offsetWidth;
+  el.scrollLeft = entre(E.crono.a, HOY) * E.crono.dpx - (el.clientWidth - izq) * 0.15;
+  el.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    ARR.el = el; ARR.x = e.clientX; ARR.s = el.scrollLeft; ARR.movido = false;
+  });
+}
+
+/* ---------- Acciones de compras ---------- */
+async function pedirProveedor(prov, boton) {
+  const marcadas = [...document.querySelectorAll('.prov-card input[data-linea]:checked')]
+    .map(c => LINEAS_PEDIR[+c.dataset.linea]).filter(l => l && l.proveedor === prov);
+  if (!marcadas.length) { toast('Marca al menos un material para pedir.'); return; }
+  boton.disabled = true; boton.textContent = 'Guardando…';
+  try {
+    aplicar(await llamar('registrarPedido', marcadas));
+    toast(`Pedido a ${prov} anotado: ${plural(marcadas.length, 'material', 'materiales')}`);
+  } catch (ex) {
+    toast('No se pudo guardar el pedido: ' + ((ex && ex.message) || ex));
+    boton.disabled = false; boton.textContent = 'Marcar como pedido';
+  }
+}
+async function cambiarPedido(id, cambios, msg) {
+  try {
+    aplicar(await llamar('actualizarPedido', id, cambios));
+    if (msg) toast(msg);
+  } catch (ex) {
+    toast('No se pudo actualizar el pedido: ' + ((ex && ex.message) || ex));
+    render();
+  }
+}
+document.addEventListener('click', e => {
+  const s = e.target.closest('[data-sub]');
+  if (s) { E.subCompras = s.dataset.sub; try { localStorage.setItem('plan-sub-compras', E.subCompras); } catch (x) {} render(); return; }
+  const pp = e.target.closest('[data-pedir-prov]');
+  if (pp) { pedirProveedor(pp.dataset.pedirProv, pp); return; }
+  const rc = e.target.closest('[data-recibido]');
+  if (rc) { rc.disabled = true; cambiarPedido(rc.dataset.recibido, { estado: 'Recibido' }, 'Pedido marcado como recibido'); return; }
+  const an = e.target.closest('[data-anular]');
+  if (an) {
+    if (an.dataset.confirmar !== '1') { an.dataset.confirmar = '1'; an.textContent = '¿Seguro? Pulsa otra vez'; return; }
+    cambiarPedido(an.dataset.anular, { estado: 'Anulado' }, 'Pedido anulado'); return;
+  }
+  const ab = e.target.closest('[data-abrir]');
+  if (ab) { const t = E.tareas.find(x => x.id === ab.dataset.abrir); if (t) abrirForm(t); }
+});
+document.addEventListener('change', e => {
+  const ll = e.target.closest('[data-llegada]');
+  if (ll && ll.value) cambiarPedido(ll.dataset.llegada, { llegada: ll.value }, 'Fecha de llegada actualizada');
+  if (e.target.id === 'soloFalta') { E.soloFalta = e.target.checked; $('#stockBody').innerHTML = filasStock(); }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'stockBuscar') { E.stockQ = e.target.value; $('#stockBody').innerHTML = filasStock(); }
 });
 
 let toastT;
